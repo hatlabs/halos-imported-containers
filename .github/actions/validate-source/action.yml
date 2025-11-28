@@ -1,0 +1,116 @@
+name: Validate Source Structure
+description: Validate source directory structure and app definitions
+
+inputs:
+  source:
+    description: 'Source name to validate (e.g., casaos-official). If empty, validates all sources.'
+    required: false
+    default: ''
+
+outputs:
+  validation-result:
+    description: 'Validation result (success or failure)'
+    value: ${{ steps.validate.outputs.result }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate source parameter
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.source }}" ]; then
+          if [ ! -d "sources/${{ inputs.source }}" ]; then
+            echo "::error::Source directory not found: sources/${{ inputs.source }}"
+            exit 1
+          fi
+          echo "::notice::Validating source: ${{ inputs.source }}"
+        else
+          echo "::notice::Validating all sources"
+        fi
+
+    - name: Install ShellCheck
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          brew install shellcheck
+        fi
+
+    - name: Install YAML validation tools
+      shell: bash
+      run: |
+        # Install yq for YAML validation
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          brew install yq
+        fi
+
+    - name: Run ShellCheck on build scripts
+      shell: bash
+      run: |
+        echo "::group::ShellCheck validation"
+
+        if [ -d "tools" ]; then
+          echo "Running shellcheck on tools/*.sh"
+          shellcheck tools/*.sh
+          echo "::notice::ShellCheck passed"
+        fi
+
+        echo "::endgroup::"
+
+    - name: Validate directory structure
+      id: validate
+      shell: bash
+      run: |
+        echo "::group::Directory structure validation"
+
+        # Run validation script
+        if [ -n "${{ inputs.source }}" ]; then
+          ./tools/validate-structure.sh "${{ inputs.source }}"
+        else
+          ./tools/validate-structure.sh
+        fi
+
+        echo "::endgroup::"
+
+        # Set output
+        echo "result=success" >> $GITHUB_OUTPUT
+        echo "::notice::Validation passed"
+
+    - name: Run test suites
+      shell: bash
+      run: |
+        echo "::group::Running test suites"
+
+        # Run all test suites
+        ./tools/test-validate-structure.sh
+        ./tools/test-build-source.sh
+        ./tools/test-build-all.sh
+
+        echo "::endgroup::"
+        echo "::notice::All tests passed"
+
+    - name: Validate app definitions (placeholder)
+      shell: bash
+      run: |
+        echo "::group::App definition validation"
+
+        # TODO: Validate app definitions using container-packaging-tools
+        # This will be implemented in Cluster 4 when apps are added
+        echo "::notice::App definition validation placeholder"
+        echo "::notice::Will be implemented in Cluster 4 (CasaOS Implementation)"
+
+        if [ -n "${{ inputs.source }}" ]; then
+          apps_dir="sources/${{ inputs.source }}/apps"
+          if [ -d "$apps_dir" ]; then
+            app_count=$(find "$apps_dir" -mindepth 1 -maxdepth 1 -type d | wc -l)
+            echo "::notice::Found $app_count apps to validate in ${{ inputs.source }}"
+            # TODO: Validate each app's metadata.yaml, config.yml, docker-compose.yml
+          fi
+        fi
+
+        echo "::endgroup::"
