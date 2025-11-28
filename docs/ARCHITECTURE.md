@@ -139,43 +139,31 @@ Upstream source configuration defines sync behavior:
 
 ### Core Technologies
 
-**Git and GitHub**: Version control and collaboration platform. GitHub Actions provides CI/CD execution.
-
-**Debian Packaging**: Standard .deb package format for distribution. Uses dpkg-buildpackage, debhelper, and dh-python.
-
-**Python 3.11+**: Runtime for container-packaging-tools and build scripts. Uses uv for dependency management.
-
-**Docker**: Required at runtime for container execution. Not used in build process.
-
-**APT Repository**: Custom repository at apt.hatlabs.fi for package distribution.
+- **Git and GitHub**: Version control and collaboration platform. GitHub Actions provides CI/CD execution.
+- **Debian Packaging**: Standard .deb package format for distribution. Uses dpkg-buildpackage, debhelper, and dh-python.
+- **Python 3.11+**: Runtime for container-packaging-tools and build scripts. Uses uv for dependency management.
+- **Docker**: Required at runtime for container execution. Not used in build process.
+- **APT Repository**: Custom repository at apt.hatlabs.fi for package distribution.
 
 ### Build Tools
 
-**container-packaging-tools**: Python package providing converters for different upstream formats. Installed via uv from GitHub repository.
-
-**dpkg-buildpackage**: Standard Debian package builder. Generates .deb, .buildinfo, and .changes files.
-
-**bash**: Shell scripts for build automation and validation.
+- **container-packaging-tools**: Python package providing converters for different upstream formats. Installed via uv from GitHub repository.
+- **dpkg-buildpackage**: Standard Debian package builder. Generates .deb, .buildinfo, and .changes files.
+- **bash**: Shell scripts for build automation and validation.
 
 ### CI/CD Infrastructure
 
-**GitHub Actions**: Runs workflows for PR validation, main branch builds, and releases.
-
-**Hat Labs Shared Workflows**: Reusable workflow definitions from hatlabs/shared-workflows repository. Provides standardized PR checks, build processes, and release publishing.
-
-**APT Repository Integration**: Automated package upload using APT_REPO_PAT secret for authentication.
+- **GitHub Actions**: Runs workflows for PR validation, main branch builds, and releases.
+- **Hat Labs Shared Workflows**: Reusable workflow definitions from hatlabs/shared-workflows repository. Provides standardized PR checks, build processes, and release publishing.
+- **APT Repository Integration**: Automated package upload using APT_REPO_PAT secret for authentication.
 
 ### Technology Decisions and Rationale
 
-**Why source-grouped structure**: Enables independent evolution of sources without conflicts. New sources can be added without touching existing code.
-
-**Why Debian packages**: Standard distribution format for Debian-based systems. Integrates with APT dependency resolution and version management.
-
-**Why per-source stores**: Provides clear attribution in UI. Users can choose which sources to install and trust.
-
-**Why container-packaging-tools**: Proven converter with 100% success rate for CasaOS. Extensible to new formats through plugin system.
-
-**Why GitHub Actions**: Native integration with GitHub repositories. Shared workflows reduce duplication across HaLOS projects.
+- **Why source-grouped structure**: Enables independent evolution of sources without conflicts. New sources can be added without touching existing code.
+- **Why Debian packages**: Standard distribution format for Debian-based systems. Integrates with APT dependency resolution and version management.
+- **Why per-source stores**: Provides clear attribution in UI. Users can choose which sources to install and trust.
+- **Why container-packaging-tools**: Proven converter with 100% success rate for CasaOS. Extensible to new formats through plugin system.
+- **Why GitHub Actions**: Native integration with GitHub repositories. Shared workflows reduce duplication across HaLOS projects.
 
 ## Integration Points
 
@@ -183,37 +171,37 @@ Upstream source configuration defines sync behavior:
 
 The system integrates with upstream app stores through:
 
-**Git repository monitoring**: Daily checks for changes using GitHub Actions scheduled workflows
-**Format-specific converters**: Transform upstream app definitions to HaLOS format
-**Change detection**: Compare current apps with upstream to identify new/updated/removed apps
-**Pull request creation**: Automated PRs when upstream changes are detected
+- **Git repository monitoring**: Daily checks for changes using GitHub Actions scheduled workflows
+- **Format-specific converters**: Transform upstream app definitions to HaLOS format
+- **Change detection**: Compare current apps with upstream to identify new/updated/removed apps
+- **Pull request creation**: Automated PRs when upstream changes are detected
 
 ### Container Packaging Tools Integration
 
 Integration with container-packaging-tools provides:
 
-**Batch conversion**: Convert all apps from a source in a single operation
-**Validation**: Schema validation during conversion ensures quality
-**Metadata generation**: Automatic generation of Debian control files
-**Fallback handling**: Intelligent defaults for missing or invalid upstream data
+- **Batch conversion**: Convert all apps from a source in a single operation
+- **Validation**: Schema validation during conversion ensures quality
+- **Metadata generation**: Automatic generation of Debian control files
+- **Fallback handling**: Intelligent defaults for missing or invalid upstream data
 
 ### APT Repository Integration
 
 Packages are published through:
 
-**Unstable channel**: Automatic on merge to main branch
-**Stable channel**: Manual via GitHub release creation
-**Repository structure**: Organized by distribution (trixie) and component (main)
-**Authentication**: GitHub PAT with write access to apt.hatlabs.fi repository
+- **Unstable channel**: Automatic on merge to main branch
+- **Stable channel**: Manual via GitHub release creation
+- **Repository structure**: Organized by distribution (trixie) and component (main)
+- **Authentication**: GitHub PAT with write access to apt.hatlabs.fi repository
 
 ### Cockpit UI Integration
 
 Store packages integrate with Cockpit through:
 
-**Package installation**: Installing a store package makes it visible in Cockpit
-**Store configuration files**: Installed to /usr/share/container-stores/
-**Package filtering**: Cockpit filters packages based on store configuration
-**Multi-store support**: Multiple stores coexist and appear separately in UI
+- **Package installation**: Installing a store package makes it visible in Cockpit
+- **Store configuration files**: Installed to /usr/share/container-stores/
+- **Package filtering**: Cockpit filters packages based on store configuration
+- **Multi-store support**: Multiple stores coexist and appear separately in UI
 
 ## Build Process
 
@@ -221,44 +209,38 @@ Store packages integrate with Cockpit through:
 
 The build process operates in these phases:
 
-**Phase 1 - Validation**: Validate directory structure and all app definitions against schemas
-
-**Phase 2 - Per-Source Building**: For each source in sources/:
-- Build store package using Debian packaging in store/debian/
-- For each app in apps/, generate Debian package with container-packaging-tools
-- Apply source-specific naming prefix
-- Collect all .deb, .buildinfo, and .changes files
-
-**Phase 3 - Aggregation**: Collect all packages from all sources into build/ directory
-
-**Phase 4 - Verification**: Ensure all expected packages were created successfully
-
-**Phase 5 - Publishing**: Upload packages to APT repository using shared workflows
+- **Phase 1 - Validation**: Validate directory structure and all app definitions against schemas
+- **Phase 2 - Per-Source Building**: For each source in sources/:
+  - Build store package using Debian packaging in store/debian/
+  - For each app in apps/, generate Debian package with container-packaging-tools
+  - Apply source-specific naming prefix
+  - Collect all .deb, .buildinfo, and .changes files
+- **Phase 3 - Aggregation**: Collect all packages from all sources into build/ directory
+- **Phase 4 - Verification**: Ensure all expected packages were created successfully
+- **Phase 5 - Publishing**: Upload packages to APT repository using shared workflows
 
 ### Package Naming Convention
 
 All packages follow strict naming conventions:
 
-**App packages**: {source}-{appname}-container (e.g., casaos-uptimekuma-container)
-**Store packages**: {source}-container-store (e.g., casaos-official-container-store)
-**All lowercase**: Debian package names must be lowercase
-**Hyphens only**: No underscores or other special characters
+- **App packages**: {source}-{appname}-container (e.g., casaos-uptimekuma-container)
+- **Store packages**: {source}-container-store (e.g., casaos-official-container-store)
+- **All lowercase**: Debian package names must be lowercase
+- **Hyphens only**: No underscores or other special characters
 
 ### Build Modes
 
 The build system supports multiple modes:
 
-**Full build**: Build all sources and all apps (default for main branch)
-**Source build**: Build only a specific source
-**Incremental build**: Build only changed apps (planned for future optimization)
+- **Full build**: Build all sources and all apps (default for main branch)
+- **Source build**: Build only a specific source
+- **Incremental build**: Build only changed apps (planned for future optimization)
 
 ### Build Scripts
 
-**tools/build-all.sh**: Iterates through all non-template sources and builds each one. Creates build/ directory and collects all packages.
-
-**tools/build-source.sh**: Builds a single source. Takes source name as argument. Builds store package first, then all app packages.
-
-**tools/validate-structure.sh**: Validates repository structure before building. Ensures all required directories exist and contain expected files.
+- **tools/build-all.sh**: Iterates through all non-template sources and builds each one. Creates build/ directory and collects all packages.
+- **tools/build-source.sh**: Builds a single source. Takes source name as argument. Builds store package first, then all app packages.
+- **tools/validate-structure.sh**: Validates repository structure before building. Ensures all required directories exist and contain expected files.
 
 ## Version Management
 
@@ -291,11 +273,9 @@ App packages track upstream versions:
 
 ### Release Management
 
-**Unstable releases**: Automatic on every merge to main. Packages uploaded to unstable component.
-
-**Stable releases**: Manual via GitHub release creation. Packages promoted from unstable or rebuilt for stable component.
-
-**Tag format**: Git tags use unified versioning format with +N revision suffix.
+- **Unstable releases**: Automatic on every merge to main. Packages uploaded to unstable component.
+- **Stable releases**: Manual via GitHub release creation. Packages promoted from unstable or rebuilt for stable component.
+- **Tag format**: Git tags use unified versioning format with +N revision suffix.
 
 ## CI/CD Architecture
 
@@ -327,11 +307,12 @@ App packages track upstream versions:
 
 The repository uses Hat Labs shared workflows:
 
-**pr-checks.yml**: Standard PR validation pattern
-**build-release.yml**: Build and publish to unstable
-**publish-stable.yml**: Promote packages to stable
+- **pr-checks.yml**: Standard PR validation pattern
+- **build-release.yml**: Build and publish to unstable
+- **publish-stable.yml**: Promote packages to stable
 
 Benefits:
+
 - Consistent CI/CD across all HaLOS repositories
 - Centralized workflow maintenance
 - Reduced duplication
@@ -363,42 +344,42 @@ Benefits:
 
 Developers work in this workflow:
 
-**Local repository**: Clone halos-imported-containers
-**Container-packaging-tools**: Install via uv for local conversion testing
-**Build locally**: Run tools/build-source.sh to test builds
-**Create PR**: Push branch and create PR for review
-**CI validates**: GitHub Actions runs full validation
-**Merge**: After PR approval, merge to main triggers unstable release
+- **Local repository**: Clone halos-imported-containers
+- **Container-packaging-tools**: Install via uv for local conversion testing
+- **Build locally**: Run tools/build-source.sh to test builds
+- **Create PR**: Push branch and create PR for review
+- **CI validates**: GitHub Actions runs full validation
+- **Merge**: After PR approval, merge to main triggers unstable release
 
 ### Unstable Channel
 
 The unstable channel provides continuous deployment:
 
-**Trigger**: Every merge to main branch
-**Build**: All packages rebuilt
-**Publishing**: Uploaded to trixie/main component with _pre suffix
-**Availability**: Immediately available for testing on HaLOS systems
-**Purpose**: Rapid iteration and testing
+- **Trigger**: Every merge to main branch
+- **Build**: All packages rebuilt
+- **Publishing**: Uploaded to trixie/main component with _pre suffix
+- **Availability**: Immediately available for testing on HaLOS systems
+- **Purpose**: Rapid iteration and testing
 
 ### Stable Channel
 
 The stable channel provides vetted releases:
 
-**Trigger**: Manual GitHub release creation
-**Build**: Packages built for stable (or promoted from unstable)
-**Publishing**: Uploaded to trixie/main component without _pre suffix
-**Availability**: Available for production HaLOS systems
-**Purpose**: Production-ready, tested releases
+- **Trigger**: Manual GitHub release creation
+- **Build**: Packages built for stable (or promoted from unstable)
+- **Publishing**: Uploaded to trixie/main component without _pre suffix
+- **Availability**: Available for production HaLOS systems
+- **Purpose**: Production-ready, tested releases
 
 ### Multi-Stage Deployment
 
 The deployment follows this progression:
 
-**Stage 1 - Development**: Local builds and testing
-**Stage 2 - PR**: Validation in CI, review by maintainers
-**Stage 3 - Unstable**: Deployed to unstable channel for testing
-**Stage 4 - Validation**: Testing on HaLOS systems
-**Stage 5 - Stable**: Release creation publishes to stable channel
+- **Stage 1 - Development**: Local builds and testing
+- **Stage 2 - PR**: Validation in CI, review by maintainers
+- **Stage 3 - Unstable**: Deployed to unstable channel for testing
+- **Stage 4 - Validation**: Testing on HaLOS systems
+- **Stage 5 - Stable**: Release creation publishes to stable channel
 
 ## Security Considerations
 
@@ -406,11 +387,11 @@ The deployment follows this progression:
 
 All packages include:
 
-**Source attribution**: Metadata clearly indicates upstream source
-**Upstream URL**: Link back to original upstream definition
-**License information**: Recorded from upstream metadata
-**Maintainer**: Hat Labs as package maintainer
-**Signature**: APT repository signing (handled by apt.hatlabs.fi)
+- **Source attribution**: Metadata clearly indicates upstream source
+- **Upstream URL**: Link back to original upstream definition
+- **License information**: Recorded from upstream metadata
+- **Maintainer**: Hat Labs as package maintainer
+- **Signature**: APT repository signing (handled by apt.hatlabs.fi)
 
 ### Upstream Trust
 
@@ -430,17 +411,17 @@ Users should:
 
 Build process runs in:
 
-**Isolated GitHub Actions runners**: Fresh environment for each build
-**No network access during build**: Builds use only repository contents
-**Secrets properly scoped**: APT_REPO_PAT has minimal required permissions
-**Reproducible builds**: Same input produces same output
+- **Isolated GitHub Actions runners**: Fresh environment for each build
+- **No network access during build**: Builds use only repository contents
+- **Secrets properly scoped**: APT_REPO_PAT has minimal required permissions
+- **Reproducible builds**: Same input produces same output
 
 ### Repository Access Control
 
-**Main branch protection**: Requires pull request reviews
-**Branch protection rules**: Enforce checks passing before merge
-**Write access**: Limited to maintainers
-**PAT rotation**: APT_REPO_PAT should be rotated periodically
+- **Main branch protection**: Requires pull request reviews
+- **Branch protection rules**: Enforce checks passing before merge
+- **Write access**: Limited to maintainers
+- **PAT rotation**: APT_REPO_PAT should be rotated periodically
 
 ## Scalability Considerations
 
@@ -448,35 +429,35 @@ Build process runs in:
 
 The architecture scales to support:
 
-**Many sources**: Source-grouped structure isolates sources
-**Many apps per source**: Parallel build of apps within a source
-**Frequent updates**: Incremental conversion of changed apps only
-**Large packages**: Build artifacts collected efficiently
+- **Many sources**: Source-grouped structure isolates sources
+- **Many apps per source**: Parallel build of apps within a source
+- **Frequent updates**: Incremental conversion of changed apps only
+- **Large packages**: Build artifacts collected efficiently
 
 ### Performance Optimizations
 
 Current optimizations:
 
-**Source independence**: Sources can be built in parallel (future)
-**Shared workflows**: Reduce CI/CD execution time through caching
-**Validation early**: Catch errors before expensive builds
-**Incremental sync**: Only process changed apps (planned)
+- **Source independence**: Sources can be built in parallel (future)
+- **Shared workflows**: Reduce CI/CD execution time through caching
+- **Validation early**: Catch errors before expensive builds
+- **Incremental sync**: Only process changed apps (planned)
 
 Future optimizations:
 
-**Parallel source builds**: Build multiple sources simultaneously
-**Cached conversions**: Skip conversion if upstream unchanged
-**Incremental package builds**: Build only changed apps
-**Distributed builds**: Use matrix strategy for parallelism
+- **Parallel source builds**: Build multiple sources simultaneously
+- **Cached conversions**: Skip conversion if upstream unchanged
+- **Incremental package builds**: Build only changed apps
+- **Distributed builds**: Use matrix strategy for parallelism
 
 ### Resource Management
 
 Build resource usage:
 
-**GitHub Actions minutes**: ~5-10 minutes per full build currently
-**Storage**: Build artifacts cleaned after upload
-**APT repository size**: Grows with number of packages (managed by apt.hatlabs.fi)
-**Network**: Minimal during build, higher during upstream sync
+- **GitHub Actions minutes**: ~5-10 minutes per full build currently
+- **Storage**: Build artifacts cleaned after upload
+- **APT repository size**: Grows with number of packages (managed by apt.hatlabs.fi)
+- **Network**: Minimal during build, higher during upstream sync
 
 ## Extension Points
 
@@ -484,13 +465,13 @@ Build resource usage:
 
 To add a new source:
 
-**Step 1**: Copy sources/_template/ to sources/{newsource}/
-**Step 2**: Configure upstream/source.yaml with source details
-**Step 3**: Create store/{newsource}.yaml with store definition
-**Step 4**: Create debian packaging in store/debian/
-**Step 5**: Run converter to populate apps/
-**Step 6**: Test build with tools/build-source.sh {newsource}
-**Step 7**: Create PR with new source
+- **Step 1**: Copy sources/_template/ to sources/{newsource}/
+- **Step 2**: Configure upstream/source.yaml with source details
+- **Step 3**: Create store/{newsource}.yaml with store definition
+- **Step 4**: Create debian packaging in store/debian/
+- **Step 5**: Run converter to populate apps/
+- **Step 6**: Test build with tools/build-source.sh {newsource}
+- **Step 7**: Create PR with new source
 
 The template system ensures consistency and reduces errors.
 
@@ -498,9 +479,9 @@ The template system ensures consistency and reduces errors.
 
 Container-packaging-tools supports:
 
-**Built-in converters**: CasaOS, Runtipi (future)
-**Custom converters**: Plugin system for new formats
-**Converter options**: Per-source configuration in upstream/source.yaml
+- **Built-in converters**: CasaOS, Runtipi (future)
+- **Custom converters**: Plugin system for new formats
+- **Converter options**: Per-source configuration in upstream/source.yaml
 
 New converters should:
 
@@ -513,10 +494,10 @@ New converters should:
 
 Build process can be extended:
 
-**Pre-build hooks**: Validation, linting, formatting
-**Post-build hooks**: Testing, verification, notifications
-**Per-source hooks**: Source-specific build customizations
-**Integration tests**: Validate packages install correctly
+- **Pre-build hooks**: Validation, linting, formatting
+- **Post-build hooks**: Testing, verification, notifications
+- **Per-source hooks**: Source-specific build customizations
+- **Integration tests**: Validate packages install correctly
 
 ## Maintenance and Operations
 
@@ -524,58 +505,58 @@ Build process can be extended:
 
 Automated daily tasks:
 
-**Upstream sync**: Check all sources for changes (when implemented)
-**Build on merge**: Automatic build and publish to unstable
-**Dependency updates**: Dependabot for GitHub Actions and Python deps
+- **Upstream sync**: Check all sources for changes (when implemented)
+- **Build on merge**: Automatic build and publish to unstable
+- **Dependency updates**: Dependabot for GitHub Actions and Python deps
 
 Manual operations:
 
-**PR review and merge**: Review automated PRs from sync
-**Release creation**: Create GitHub release for stable channel
-**Source addition**: Add new sources as needed
+- **PR review and merge**: Review automated PRs from sync
+- **Release creation**: Create GitHub release for stable channel
+- **Source addition**: Add new sources as needed
 
 ### Monitoring
 
 Monitor these indicators:
 
-**Conversion success rate**: Should remain 100% for valid apps
-**Build success rate**: Should be >95%
-**Sync latency**: Changes should appear within 24 hours
-**CI/CD failures**: Investigate and fix promptly
+- **Conversion success rate**: Should remain 100% for valid apps
+- **Build success rate**: Should be >95%
+- **Sync latency**: Changes should appear within 24 hours
+- **CI/CD failures**: Investigate and fix promptly
 
 ### Troubleshooting
 
 Common issues and resolution:
 
-**Conversion failure**: Check upstream format changes, update converter
-**Build failure**: Validate package metadata, check dependencies
-**Sync failure**: Check upstream repository access, network issues
-**Publication failure**: Verify APT_REPO_PAT is valid
+- **Conversion failure**: Check upstream format changes, update converter
+- **Build failure**: Validate package metadata, check dependencies
+- **Sync failure**: Check upstream repository access, network issues
+- **Publication failure**: Verify APT_REPO_PAT is valid
 
 ## Future Architecture Evolution
 
 ### Planned Enhancements
 
-**Automated upstream sync**: Daily scheduled workflow to check sources
-**Incremental builds**: Build only changed apps to reduce CI time
-**Parallel source builds**: Use GitHub Actions matrix for parallelism
-**Template improvements**: More comprehensive source templates
+- **Automated upstream sync**: Daily scheduled workflow to check sources
+- **Incremental builds**: Build only changed apps to reduce CI time
+- **Parallel source builds**: Use GitHub Actions matrix for parallelism
+- **Template improvements**: More comprehensive source templates
 
 ### Potential Changes
 
-**Alternative package formats**: Flatpak, Snap (if requested)
-**Multi-repository support**: Publish to multiple APT repositories
-**Metadata enhancement**: Richer app metadata, screenshots, ratings
-**Search integration**: Cross-source app search capability
+- **Alternative package formats**: Flatpak, Snap (if requested)
+- **Multi-repository support**: Publish to multiple APT repositories
+- **Metadata enhancement**: Richer app metadata, screenshots, ratings
+- **Search integration**: Cross-source app search capability
 
 ### Backward Compatibility
 
 Architecture changes must:
 
-**Maintain package names**: Existing packages continue to work
-**Support existing stores**: Store packages remain compatible
-**Preserve data**: User configurations and app data unaffected
-**Document migrations**: Clear upgrade path for breaking changes
+- **Maintain package names**: Existing packages continue to work
+- **Support existing stores**: Store packages remain compatible
+- **Preserve data**: User configurations and app data unaffected
+- **Document migrations**: Clear upgrade path for breaking changes
 
 ## Conclusion
 
