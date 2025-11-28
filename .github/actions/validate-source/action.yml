@@ -41,12 +41,15 @@ runs:
     - name: Install YAML validation tools
       shell: bash
       run: |
-        # Install yq for YAML validation
+        # Install yq for YAML validation (pinned version for reproducibility)
+        YQ_VERSION="v4.40.5"
         if [ "$RUNNER_OS" == "Linux" ]; then
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64"
           sudo chmod +x /usr/local/bin/yq
+          yq --version
         elif [ "$RUNNER_OS" == "macOS" ]; then
           brew install yq
+          yq --version
         fi
 
     - name: Run ShellCheck on build scripts
@@ -54,10 +57,13 @@ runs:
       run: |
         echo "::group::ShellCheck validation"
 
-        if [ -d "tools" ]; then
+        # Check if shell scripts exist before running shellcheck
+        if [ -d "tools" ] && compgen -G "tools/*.sh" > /dev/null; then
           echo "Running shellcheck on tools/*.sh"
           shellcheck tools/*.sh
           echo "::notice::ShellCheck passed"
+        else
+          echo "::warning::No shell scripts found in tools/ directory"
         fi
 
         echo "::endgroup::"
@@ -66,6 +72,12 @@ runs:
       id: validate
       shell: bash
       run: |
+        # Validate script exists
+        if [ ! -x "./tools/validate-structure.sh" ]; then
+          echo "::error::validate-structure.sh not found or not executable"
+          exit 1
+        fi
+
         echo "::group::Directory structure validation"
 
         # Run validation script
@@ -86,7 +98,17 @@ runs:
       run: |
         echo "::group::Running test suites"
 
+        # Validate test scripts exist
+        for test_script in test-validate-structure.sh test-build-source.sh test-build-all.sh; do
+          if [ ! -x "./tools/$test_script" ]; then
+            echo "::error::$test_script not found or not executable"
+            exit 1
+          fi
+        done
+
         # Run all test suites
+        # Note: These test the build scripts themselves, not source structure
+        # Consider running only on changes to tools/ directory in future
         ./tools/test-validate-structure.sh
         ./tools/test-build-source.sh
         ./tools/test-build-all.sh

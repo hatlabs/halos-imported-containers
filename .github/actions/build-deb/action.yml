@@ -41,7 +41,15 @@ runs:
       shell: bash
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
-        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+        # Verify installation and add to PATH
+        if [ -f "$HOME/.cargo/bin/uv" ]; then
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          "$HOME/.cargo/bin/uv" --version
+        else
+          echo "::error::uv installation failed - binary not found at expected location"
+          exit 1
+        fi
 
     - name: Cache uv dependencies
       uses: actions/cache@v4
@@ -73,18 +81,27 @@ runs:
     - name: Install YAML validation tools
       shell: bash
       run: |
-        # Install yq for YAML validation
+        # Install yq for YAML validation (pinned version for reproducibility)
+        YQ_VERSION="v4.40.5"
         if [ "$RUNNER_OS" == "Linux" ]; then
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64"
           sudo chmod +x /usr/local/bin/yq
+          yq --version
         elif [ "$RUNNER_OS" == "macOS" ]; then
           brew install yq
+          yq --version
         fi
 
     - name: Run build
       id: build
       shell: bash
       run: |
+        # Validate build script exists
+        if [ ! -x "./tools/build-source.sh" ]; then
+          echo "::error::build-source.sh not found or not executable"
+          exit 1
+        fi
+
         echo "::group::Building source: ${{ inputs.source }}"
 
         # Run build script
@@ -95,9 +112,9 @@ runs:
         # Set outputs
         echo "build-dir=build" >> $GITHUB_OUTPUT
 
-        # Count packages
+        # Count packages (with error handling)
         if [ -d "build" ]; then
-          package_count=$(find build -name "*.deb" | wc -l)
+          package_count=$(find build -name "*.deb" 2>/dev/null | wc -l)
           echo "package-count=$package_count" >> $GITHUB_OUTPUT
           echo "::notice::Built $package_count packages"
         else
