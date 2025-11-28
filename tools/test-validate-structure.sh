@@ -142,8 +142,9 @@ test_exit_code_failure() {
     mkdir -p "$TEST_DIR/sources/badsource"
     # Missing required subdirectories
 
-    cd "$TEST_DIR" && "$VALIDATE_SCRIPT" badsource >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
+    local exit_code=0
+    ( cd "$TEST_DIR" && "$VALIDATE_SCRIPT" badsource >/dev/null 2>&1 ) || exit_code=$?
+    if [ $exit_code -ne 0 ]; then
         pass "Exit code is non-zero on validation failure"
     else
         fail "Exit code should be non-zero on validation failure"
