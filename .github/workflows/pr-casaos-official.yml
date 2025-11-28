@@ -6,7 +6,7 @@ on:
       - 'sources/casaos-official/**'
       - 'tools/**'
       - '.github/actions/**'
-      - '.github/workflows/pr-casaos-official.yml'
+      - '.github/workflows/**casaos-official.yml'
 
 permissions:
   contents: read

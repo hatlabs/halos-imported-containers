@@ -68,8 +68,6 @@ jobs:
     # Remove this 'if' condition once sources/casaos-official/ is fully implemented.
     # At that point, the build job will always produce packages and this job should always run.
     if: needs.build.outputs.has-packages == 'true'
-    # TODO: Implement when shared-workflows publish-unstable.yml is available
-    # For now, this job is a placeholder
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -77,17 +75,33 @@ jobs:
           name: packages-casaos-official-unstable
           path: build
 
-      - name: Publish to apt.hatlabs.fi (placeholder)
+      - name: List packages to publish
         run: |
-          echo "::notice::Publishing to unstable channel (placeholder)"
-          echo "::notice::This will be implemented when shared-workflows are available"
+          echo "::notice::Publishing to unstable channel"
           echo "::notice::Packages to publish:"
           ls -lh build/*.deb
 
-          # TODO: Call shared workflow or publish directly
-          # Expected approach:
-          # - Use hatlabs/shared-workflows/.github/workflows/publish-unstable.yml
-          # - Pass APT_REPO_PAT secret
-          # - Upload to trixie/main with _pre suffix
+      - name: Dispatch to APT repository
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.APT_REPO_PAT }}
+          repository: hatlabs/apt.hatlabs.fi
+          event-type: package-updated
+          client-payload: |
+            {
+              "repository": "${{ github.repository }}",
+              "distro": "trixie",
+              "channel": "unstable",
+              "component": "main"
+            }
 
-          echo "::warning::Publishing not yet implemented - requires APT_REPO_PAT secret and shared workflow"
+      - name: Report success
+        run: |
+          echo "=== Unstable Channel Publish Complete ==="
+          echo "Repository: ${{ github.repository }}"
+          echo "Distro: trixie"
+          echo "Channel: unstable"
+          echo "Component: main"
+          echo ""
+          echo "Dispatched to hatlabs/apt.hatlabs.fi"
+          echo "Packages will be available via apt.hatlabs.fi unstable channel"

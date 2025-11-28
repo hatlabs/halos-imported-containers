@@ -53,7 +53,6 @@ jobs:
       github.event.release.draft == false &&
       (startsWith(github.event.release.tag_name, 'casaos-official/') ||
        contains(github.event.release.tag_name, 'casaos-official'))
-    # TODO: Implement when shared-workflows publish-stable.yml is available
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -72,20 +71,39 @@ jobs:
             echo "::notice::No packages to publish (source not yet implemented)"
           fi
 
-      - name: Publish to apt.hatlabs.fi (placeholder)
+      - name: List packages to publish
         if: steps.check.outputs.has-packages == 'true'
         run: |
-          echo "::notice::Publishing to stable channel (placeholder)"
+          echo "::notice::Publishing to stable channel"
           echo "::notice::Release tag: ${{ github.event.release.tag_name }}"
-          echo "::notice::This will be implemented when shared-workflows are available"
           echo "::notice::Packages to publish:"
           ls -lh build/*.deb
 
-          # TODO: Call shared workflow or publish directly
-          # Expected approach:
-          # - Use hatlabs/shared-workflows/.github/workflows/publish-stable.yml
-          # - Pass APT_REPO_PAT secret
-          # - Upload to trixie/main without _pre suffix
-          # - Packages should use release version from VERSION file + tag
+      - name: Dispatch to APT repository
+        if: steps.check.outputs.has-packages == 'true'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.APT_REPO_PAT }}
+          repository: hatlabs/apt.hatlabs.fi
+          event-type: package-updated
+          client-payload: |
+            {
+              "repository": "${{ github.repository }}",
+              "distro": "trixie",
+              "channel": "stable",
+              "component": "main"
+            }
 
-          echo "::warning::Publishing not yet implemented - requires APT_REPO_PAT secret and shared workflow"
+      - name: Report success
+        if: steps.check.outputs.has-packages == 'true'
+        run: |
+          echo "=== Stable Channel Publish Complete ==="
+          echo "Repository: ${{ github.repository }}"
+          echo "Release tag: ${{ github.event.release.tag_name }}"
+          echo "Distro: trixie"
+          echo "Channel: stable"
+          echo "Component: main"
+          echo ""
+          echo "Dispatched to hatlabs/apt.hatlabs.fi"
+          echo "Packages will be available via apt.hatlabs.fi stable channel"
+          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }}"
