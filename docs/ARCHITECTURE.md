@@ -281,27 +281,40 @@ App packages track upstream versions:
 
 ### Workflow Organization
 
-**PR Workflow (.github/workflows/pr.yml)**: Runs on pull requests
-- Validates directory structure
-- Validates all app definitions
-- Builds all packages (but doesn't publish)
-- Reports status to PR
+The repository uses per-source workflows for build isolation. Each source has its own set of workflows, allowing independent building, failure isolation, and easier debugging.
 
-**Main Workflow (.github/workflows/main.yml)**: Runs on merge to main
-- Builds all packages
-- Publishes to unstable channel
-- Creates git tags
-- Generates changelog
+**Per-Source Structure**:
 
-**Release Workflow (.github/workflows/release.yml)**: Runs on release publication
-- Builds packages for stable channel
-- Publishes to stable component
-- Creates release artifacts
+- **PR Workflow (.github/workflows/pr-{source}.yml)**: Runs on pull requests affecting this source
+  - Validates directory structure for this source
+  - Validates all app definitions in this source
+  - Builds packages for this source only (but doesn't publish)
+  - Reports status to PR
 
-**Sync Workflow (.github/workflows/sync-upstream.yml)**: Scheduled daily (planned)
-- Checks each source for upstream changes
-- Creates PR if changes detected
-- Runs converter on modified apps
+- **Main Workflow (.github/workflows/main-{source}.yml)**: Runs on merge to main when this source changes
+  - Builds packages for this source only
+  - Publishes to unstable channel
+  - Source failures don't block other sources
+
+- **Release Workflow (.github/workflows/release-{source}.yml)**: Runs on release publication
+  - Builds packages for this source for stable channel
+  - Publishes to stable component
+  - Creates source-specific release artifacts
+
+**Shared Workflows**:
+
+- **Sync Workflow (.github/workflows/sync-{source}.yml)**: Scheduled daily per source (planned)
+  - Checks this source for upstream changes
+  - Creates PR if changes detected
+  - Runs converter on modified apps
+
+**Benefits of Per-Source Workflows**:
+
+- **Isolation**: One source's build failure doesn't affect others
+- **Debugging**: Clear which source is failing
+- **Parallelism**: All sources build concurrently
+- **Selective builds**: Can rebuild just one source
+- **Path filtering**: Workflows only trigger on relevant file changes
 
 ### Shared Workflows
 
@@ -320,6 +333,13 @@ Benefits:
 
 ### GitHub Actions Structure
 
+**Workflows (.github/workflows/)**: Per-source workflow files
+- pr-casaos-official.yml: PR validation for CasaOS Official source
+- main-casaos-official.yml: Main branch build for CasaOS Official source
+- release-casaos-official.yml: Release build for CasaOS Official source
+- sync-casaos-official.yml: Upstream sync for CasaOS Official source
+- (Repeat pattern for each source: runtipi, casaos-community, etc.)
+
 **Actions (.github/actions/)**: Reusable action definitions
 - build-deb/: Build Debian packages action
 - run-tests/: Run validation tests action
@@ -329,14 +349,25 @@ Benefits:
 - generate-changelog.sh: Generate changelog from git history
 - generate-release-notes.sh: Create release notes from changes
 
+**Path Filtering**: Each workflow uses GitHub Actions path filtering to trigger only on changes to its source:
+- pr-casaos-official.yml triggers on: sources/casaos-official/**
+- main-casaos-official.yml triggers on: sources/casaos-official/**
+- Common files (tools/, docs/) trigger all source workflows
+
 ### Secrets and Configuration
 
-**APT_REPO_PAT**: GitHub personal access token with write access to apt.hatlabs.fi repository
+**APT_REPO_PAT**: GitHub personal access token with write access to apt.hatlabs.fi repository (shared across all source workflows)
 
-**Workflow Configuration**:
+**Per-Source Workflow Configuration**:
 - apt-distro: trixie (Debian 13)
 - apt-component: main
-- package-name: imported-containers-meta (metapackage for releases)
+- package-name: {source}-container-store (e.g., casaos-official-container-store)
+- source-dir: sources/{source}/ (path to build)
+
+**Shared Configuration**:
+- All sources publish to the same APT repository
+- All sources use unified versioning scheme
+- Common tooling scripts available to all workflows
 
 ## Deployment Architecture
 
@@ -438,26 +469,29 @@ The architecture scales to support:
 
 Current optimizations:
 
-- **Source independence**: Sources can be built in parallel (future)
+- **Per-source workflows**: Sources build in parallel automatically via separate GitHub Actions workflows
+- **Path filtering**: Workflows only trigger on relevant source changes
 - **Shared workflows**: Reduce CI/CD execution time through caching
 - **Validation early**: Catch errors before expensive builds
-- **Incremental sync**: Only process changed apps (planned)
+- **Build isolation**: Failed source builds don't block other sources
 
 Future optimizations:
 
-- **Parallel source builds**: Build multiple sources simultaneously
+- **Incremental sync**: Only process changed apps (planned)
 - **Cached conversions**: Skip conversion if upstream unchanged
-- **Incremental package builds**: Build only changed apps
-- **Distributed builds**: Use matrix strategy for parallelism
+- **Incremental package builds**: Build only changed apps within a source
+- **Matrix parallelism**: Use matrix strategy to build multiple apps within a source concurrently
 
 ### Resource Management
 
 Build resource usage:
 
-- **GitHub Actions minutes**: ~5-10 minutes per full build currently
+- **GitHub Actions minutes**: ~5-10 minutes per source build, runs in parallel across sources
+- **Selective triggering**: Path filtering means only changed sources consume CI minutes
 - **Storage**: Build artifacts cleaned after upload
 - **APT repository size**: Grows with number of packages (managed by apt.hatlabs.fi)
 - **Network**: Minimal during build, higher during upstream sync
+- **Parallel efficiency**: Multiple sources building simultaneously doesn't increase wall-clock time
 
 ## Extension Points
 
@@ -469,11 +503,16 @@ To add a new source:
 - **Step 2**: Configure upstream/source.yaml with source details
 - **Step 3**: Create store/{newsource}.yaml with store definition
 - **Step 4**: Create debian packaging in store/debian/
-- **Step 5**: Run converter to populate apps/
-- **Step 6**: Test build with tools/build-source.sh {newsource}
-- **Step 7**: Create PR with new source
+- **Step 5**: Create workflow files in .github/workflows/:
+  - pr-{newsource}.yml (copy and adapt from existing source)
+  - main-{newsource}.yml (copy and adapt from existing source)
+  - release-{newsource}.yml (copy and adapt from existing source)
+  - sync-{newsource}.yml (copy and adapt from existing source)
+- **Step 6**: Run converter to populate apps/
+- **Step 7**: Test build with tools/build-source.sh {newsource}
+- **Step 8**: Create PR with new source and workflows
 
-The template system ensures consistency and reduces errors.
+The template system and per-source workflows ensure consistency, isolation, and easy debugging.
 
 ### Adding New Converters
 
