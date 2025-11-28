@@ -1,37 +1,45 @@
-# HaLOS CasaOS Container Store
+# HaLOS Imported Containers
 
-Auto-converted CasaOS App Store mirror for HaLOS.
+Auto-imported container applications from multiple app stores for HaLOS.
 
 ## Overview
 
-This repository contains automatically converted container applications from the [CasaOS App Store](https://github.com/IceWhaleTech/CasaOS-AppStore) for use with HaLOS (Hat Labs Operating System).
+This repository contains automatically converted container applications from multiple upstream app stores for use with HaLOS (Hat Labs Operating System). Currently supported sources:
 
-**Package Naming Convention**: `casaos-{appname}-container`
+- **[CasaOS Official](https://github.com/IceWhaleTech/CasaOS-AppStore)**: 147+ applications
+- **CasaOS Community**: Third-party CasaOS stores (planned)
+- **Runtipi**: Runtipi app store (planned)
 
-This prefix:
-- Clearly identifies the package source (auto-converted from CasaOS)
-- Prevents naming conflicts with manually curated packages
-- Enables multiple app sources to coexist in the HaLOS ecosystem
+**Package Naming Convention**: `{source}-{appname}-container`
+
+Source-specific prefixes:
+- Clearly identify the package source (casaos-, runtipi-, etc.)
+- Prevent naming conflicts between sources and manually curated packages
+- Enable multiple app sources to coexist in the HaLOS ecosystem
 
 ## Structure
 
 ```
-halos-casaos-containers/
-├── apps/                 # Converted CasaOS applications
-│   ├── uptimekuma/      # Each app has metadata.yaml, config.yml, docker-compose.yml
-│   └── ...              # 147 apps total
-├── store/               # CasaOS container store definition
-│   └── casaos.yaml      # Store configuration and filters
-└── tools/               # Build and sync automation
+halos-imported-containers/
+├── sources/
+│   ├── casaos-official/     # CasaOS official apps (current)
+│   │   ├── apps/            # Converted applications (147+ apps)
+│   │   ├── store/           # Store definition and packaging
+│   │   └── upstream/        # Sync metadata
+│   ├── casaos-community/    # CasaOS community apps (planned)
+│   ├── runtipi/             # Runtipi apps (planned)
+│   └── _template/           # Template for adding new sources
+├── tools/                   # Build and sync automation
+└── docs/                    # Specifications and architecture
 ```
 
 ## Conversion Process
 
 Apps are automatically converted using the [`container-packaging-tools`](https://github.com/hatlabs/container-packaging-tools) converter:
 
-1. **Upstream Sync**: Monitor CasaOS-AppStore for changes
-2. **Automatic Conversion**: Run converter on all apps (100% success rate - 147/147 apps)
-3. **Package Generation**: Build Debian packages with proper metadata
+1. **Upstream Sync**: Monitor multiple upstream app stores for changes
+2. **Automatic Conversion**: Run source-specific converters on all apps (currently 147/147 for CasaOS Official)
+3. **Package Generation**: Build Debian packages with proper metadata and source prefixes
 4. **Repository Publishing**: Publish to apt.hatlabs.fi
 
 ## Package Format
@@ -43,37 +51,48 @@ Each converted app includes:
 
 ## Store Configuration
 
-The CasaOS store is configured to include:
-- All packages matching pattern: `casaos-*-container`
+Each source has its own container store package:
+- **casaos-official-container-store**: Includes packages matching `casaos-*-container`
+- **casaos-community-container-store** (planned): Includes packages matching `casaos-community-*-container`
+- **runtipi-container-store** (planned): Includes packages matching `runtipi-*-container`
+
+All stores:
 - Origin: Hat Labs
 - Categories: Web, utilities, media, networking, etc. (non-marine apps)
+- Appear separately in Cockpit UI for clear source attribution
 
 ## Installation
 
-Apps from this store can be installed via:
+Apps from these stores can be installed via:
 
 ```bash
-# Install the store package
-sudo apt install casaos-container-store
+# Install a store package
+sudo apt install casaos-official-container-store
 
-# Install individual apps
+# Install individual apps (with source prefix)
 sudo apt install casaos-uptimekuma-container
 sudo apt install casaos-jellyfin-container
+
+# Future: Runtipi apps
+sudo apt install runtipi-container-store
+sudo apt install runtipi-jellyfin-container
 ```
 
 ## Automation
 
 This repository uses fully automated CI/CD:
-- **Daily sync**: Check for upstream changes in CasaOS-AppStore
-- **Auto-conversion**: Re-convert modified apps
+- **Daily sync**: Check for upstream changes across all configured sources
+- **Auto-conversion**: Re-convert modified apps per source
 - **PR creation**: Automated PRs for review
 - **Release**: Auto-publish to APT repository
+- **Per-source builds**: Each source can be built and deployed independently
 
 ## Version Management
 
-- **VERSION file**: Contains upstream version (e.g., `0.1.0`)
+- **VERSION file**: Contains repository infrastructure version (e.g., `0.1.0`)
 - **Git tags**: Auto-generated with format `v{version}+{N}_pre` (unstable) and `v{version}+{N}` (stable)
-- **Debian packages**: Use version format `{version}-{N}`
+- **Store packages**: Each source's store package has independent versioning
+- **App packages**: Individual app versions track upstream versions
 
 ## Development
 
