@@ -111,8 +111,9 @@ build_store_package() {
     info "Would execute: dpkg-buildpackage -us -uc -b in $store_dir"
 
     # Create a placeholder .deb file for testing
+    # TODO: Extract version from debian/changelog when implementing real build
     local package_name="${source_name}-container-store"
-    local version="0.1.0"
+    local version="0.1.0"  # Hard-coded for placeholder only
     touch "$BUILD_DIR/${package_name}_${version}_all.deb"
     info "Created placeholder: ${package_name}_${version}_all.deb"
 }
@@ -130,7 +131,8 @@ build_app_packages() {
     fi
 
     # Count apps
-    local app_count=$(find "$apps_dir" -mindepth 1 -maxdepth 1 -type d | wc -l)
+    local app_count
+    app_count=$(find "$apps_dir" -mindepth 1 -maxdepth 1 -type d | wc -l)
     if [ "$app_count" -eq 0 ]; then
         info "No apps found in $apps_dir (store-only package)"
         return 0
@@ -146,9 +148,11 @@ build_app_packages() {
 
     for app_dir in "$apps_dir"/*; do
         if [ -d "$app_dir" ]; then
-            local app_name=$(basename "$app_dir")
+            local app_name
+            app_name=$(basename "$app_dir")
             local package_name="${source_name}-${app_name}-container"
-            local version="1.0.0"
+            # TODO: Extract version from metadata.yaml when implementing real build
+            local version="1.0.0"  # Hard-coded for placeholder only
 
             info "Would build: $package_name"
             # TODO: Replace with actual build command
@@ -172,7 +176,8 @@ print_summary() {
         return
     fi
 
-    local deb_count=$(find "$BUILD_DIR" -name "*.deb" | wc -l)
+    local deb_count
+    deb_count=$(find "$BUILD_DIR" -name "*.deb" | wc -l)
     info "Total packages built: $deb_count"
 
     if [ "$deb_count" -gt 0 ]; then

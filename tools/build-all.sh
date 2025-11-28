@@ -80,14 +80,14 @@ print_summary() {
     info "Total sources processed: $TOTAL_SOURCES"
     info "Successful builds: $successful_count"
 
-    if [ $successful_count -gt 0 ]; then
+    if [ "$successful_count" -gt 0 ]; then
         echo "Successfully built sources:"
         for source in "${SUCCESSFUL_SOURCES[@]}"; do
             echo -e "  ${GREEN}✓${NC} $source"
         done
     fi
 
-    if [ $failed_count -gt 0 ]; then
+    if [ "$failed_count" -gt 0 ]; then
         warn "Failed builds: $failed_count"
         echo "Failed sources:"
         for source in "${FAILED_SOURCES[@]}"; do
@@ -97,12 +97,13 @@ print_summary() {
 
     # Package summary
     if [ -d "$BUILD_DIR" ]; then
-        local deb_count=$(find "$BUILD_DIR" -name "*.deb" 2>/dev/null | wc -l)
+        local deb_count
+        deb_count=$(find "$BUILD_DIR" -name "*.deb" 2>/dev/null | wc -l)
         info "Total packages in build/: $deb_count"
     fi
 
     echo ""
-    if [ $failed_count -gt 0 ]; then
+    if [ "$failed_count" -gt 0 ]; then
         error "Build completed with failures"
         return 1
     else
@@ -136,7 +137,8 @@ main() {
     local source_dirs=()
     for source_dir in "$SOURCES_DIR"/*; do
         if [ -d "$source_dir" ]; then
-            local source_name=$(basename "$source_dir")
+            local source_name
+            source_name=$(basename "$source_dir")
 
             # Skip _template directory
             if [ "$source_name" = "_template" ]; then
@@ -161,8 +163,8 @@ main() {
 
     # Build each source (continue on error)
     for source_name in "${source_dirs[@]}"; do
-        # Use subshell and || to prevent set -e from exiting on build failure
-        ( build_source "$source_name" ) || true
+        # Continue on error to build all sources even if some fail
+        build_source "$source_name" || true
     done
 
     # Print summary and exit

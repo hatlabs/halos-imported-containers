@@ -61,19 +61,39 @@ validate_source() {
         fi
     done
 
-    # Check for store YAML file (must have at least one .yaml file in store/)
+    # Check for store YAML file (must have exactly one .yaml file in store/)
     if [ ! -d "$source_dir/store" ]; then
         error "Store directory missing in $source_name"
     else
-        local yaml_count=$(find "$source_dir/store" -maxdepth 1 -name "*.yaml" -o -name "*.yml" | wc -l)
+        local yaml_count
+        yaml_count=$(find "$source_dir/store" -maxdepth 1 \( -name "*.yaml" -o -name "*.yml" \) -type f | wc -l)
         if [ "$yaml_count" -eq 0 ]; then
             error "No store YAML file found in $source_name/store/"
+        elif [ "$yaml_count" -gt 1 ]; then
+            warn "Multiple YAML files found in $source_name/store/ (expected 1)"
+        fi
+
+        # Validate YAML syntax if yq is available
+        if command -v yq &> /dev/null; then
+            for yaml_file in "$source_dir/store"/*.{yaml,yml}; do
+                [ -f "$yaml_file" ] || continue
+                if ! yq eval . "$yaml_file" >/dev/null 2>&1; then
+                    error "Invalid YAML syntax in $(basename "$yaml_file")"
+                fi
+            done
         fi
     fi
 
     # Check for upstream source.yaml
     if [ ! -f "$source_dir/upstream/source.yaml" ]; then
         error "Required file missing in $source_name: upstream/source.yaml"
+    else
+        # Validate YAML syntax if yq is available
+        if command -v yq &> /dev/null; then
+            if ! yq eval . "$source_dir/upstream/source.yaml" >/dev/null 2>&1; then
+                error "Invalid YAML syntax in upstream/source.yaml"
+            fi
+        fi
     fi
 
     # Check for store/debian directory (required for Debian packaging)
@@ -101,7 +121,8 @@ main() {
         info "Validating all sources in $SOURCES_DIR"
 
         # Check if sources directory is empty
-        local source_count=$(find "$SOURCES_DIR" -mindepth 1 -maxdepth 1 -type d ! -name "_template" | wc -l)
+        local source_count
+        source_count=$(find "$SOURCES_DIR" -mindepth 1 -maxdepth 1 -type d ! -name "_template" | wc -l)
         if [ "$source_count" -eq 0 ]; then
             info "No sources found to validate (empty sources directory is valid)"
             exit 0
