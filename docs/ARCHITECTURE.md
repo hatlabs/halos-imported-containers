@@ -55,37 +55,37 @@ This design enables:
 
 The repository uses a source-grouped structure at the root level:
 
-**sources/** - Contains all upstream source integrations, each in its own subdirectory
-**tools/** - Build automation scripts and validation utilities
-**docs/** - Specifications, architecture, and guides
-**.github/** - CI/CD workflows and GitHub configuration
+- **sources/** - Contains all upstream source integrations, each in its own subdirectory
+- **tools/** - Build automation scripts and validation utilities
+- **docs/** - Specifications, architecture, and guides
+- **.github/** - CI/CD workflows and GitHub configuration
 
 ### Source Directory Structure
 
 Each source directory follows a standard template:
 
-**apps/** - Contains converted application definitions, one subdirectory per app
-**store/** - Store definition YAML and Debian packaging files for the store package
-**upstream/** - Sync configuration and metadata about the upstream source
-**README.md** - Source-specific documentation
+- **apps/** - Contains converted application definitions, one subdirectory per app
+- **store/** - Store definition YAML and Debian packaging files for the store package
+- **upstream/** - Sync configuration and metadata about the upstream source
+- **README.md** - Source-specific documentation
 
 ### App Directory Structure
 
 Each app within a source's apps/ directory contains:
 
-**metadata.yaml** - Package metadata (name, description, version, license, maintainer)
-**config.yml** - User-configurable parameters schema (environment variables, volumes, ports)
-**docker-compose.yml** - Container service definition
-**debian/** - Debian packaging files (control, rules, install, changelog)
+- **metadata.yaml** - Package metadata (name, description, version, license, maintainer)
+- **config.yml** - User-configurable parameters schema (environment variables, volumes, ports)
+- **docker-compose.yml** - Container service definition
+- **debian/** - Debian packaging files (control, rules, install, changelog)
 
 ### Template Directory
 
 The **sources/_template/** directory provides a skeleton for adding new sources:
 
-**apps/.gitkeep** - Placeholder for apps directory
-**store/template.yaml** - Example store configuration
-**upstream/source.yaml.example** - Template sync configuration
-**README.md.template** - Documentation template with placeholders
+- **apps/.gitkeep** - Placeholder for apps directory
+- **store/template.yaml** - Example store configuration
+- **upstream/source.yaml.example** - Template sync configuration
+- **README.md.template** - Documentation template with placeholders
 
 ## Data Models and Schemas
 
