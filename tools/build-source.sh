@@ -186,7 +186,7 @@ build_app_packages() {
             # Note: Package name from generate-container-packages may differ from our expected name
             # It uses the name from the app's metadata
             local deb_file
-            deb_file=$(find "$BUILD_DIR" -maxdepth 1 -name "*${app_name}*container*.deb" -type f -mmin -1 | head -n 1)
+            deb_file=$(find "$BUILD_DIR" -maxdepth 1 -name "*${app_name}*container*.deb" -type f | head -n 1)
 
             if [ -n "$deb_file" ]; then
                 built_count=$((built_count + 1))

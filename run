@@ -59,10 +59,9 @@ function build-source {
 
   debtools bash -c "
     set -e
-    # Install container-packaging-tools from local directory
-    cd /workspace/../container-packaging-tools
-    uv tool install --editable .
-    cd /workspace
+    # Install container-packaging-tools from GitHub
+    uv tool install git+https://github.com/hatlabs/container-packaging-tools.git
+    export PATH=\"\$HOME/.local/bin:\$PATH\"
 
     # Run the build
     ./tools/build-source.sh $source_name
@@ -80,10 +79,9 @@ function build-all {
 
   debtools bash -c "
     set -e
-    # Install container-packaging-tools
-    cd /workspace/../container-packaging-tools
-    uv tool install --editable .
-    cd /workspace
+    # Install container-packaging-tools from GitHub
+    uv tool install git+https://github.com/hatlabs/container-packaging-tools.git
+    export PATH=\"\$HOME/.local/bin:\$PATH\"
 
     # Run the build
     ./tools/build-all.sh

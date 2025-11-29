@@ -85,7 +85,10 @@ runs:
         export PATH="$HOME/.local/bin:$PATH"
 
         # Verify installation
-        generate-container-packages --version || echo "::warning::generate-container-packages may not be available yet"
+        if ! generate-container-packages --version; then
+          echo "::error::generate-container-packages installation failed"
+          exit 1
+        fi
         echo "::endgroup::"
 
     - name: Install Debian packaging tools
