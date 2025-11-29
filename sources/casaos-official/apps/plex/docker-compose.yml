@@ -6,10 +6,11 @@ services:
       PUID: ${PUID}
       VERSION: ${VERSION}
     image: lscr.io/linuxserver/plex:1.41.3
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Media
+    - source: ${CONTAINER_DATA_ROOT}/Media
       target: /Media
       type: bind

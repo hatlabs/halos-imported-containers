@@ -12,10 +12,11 @@ services:
     - protocol: tcp
       published: 6789
       target: 6789
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind

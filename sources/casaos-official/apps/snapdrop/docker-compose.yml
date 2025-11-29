@@ -13,7 +13,8 @@ services:
     - protocol: tcp
       published: 89
       target: 80
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind

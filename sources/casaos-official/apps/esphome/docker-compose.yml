@@ -4,12 +4,13 @@ services:
     environment:
       ESPHOME_DASHBOARD_USE_PING: ${ESPHOME_DASHBOARD_USE_PING}
       TZ: ${TZ}
-    image: ghcr.io/esphome/esphome:2025.2
+    image: ghcr.io/esphome/esphome:2025.11.0
     ports:
     - protocol: tcp
       published: 6052
       target: 6052
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind

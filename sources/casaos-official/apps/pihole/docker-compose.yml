@@ -19,7 +19,8 @@ services:
     - protocol: tcp
       published: 8443
       target: 443
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/etc/pihole/
+    - source: ${CONTAINER_DATA_ROOT}/etc/pihole/
       target: /etc/pihole
       type: bind

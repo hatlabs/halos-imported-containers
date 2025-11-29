@@ -6,7 +6,8 @@ services:
     - protocol: tcp
       published: 8000
       target: 8000
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID
+    - source: ${CONTAINER_DATA_ROOT}
       target: /2fauth
       type: bind

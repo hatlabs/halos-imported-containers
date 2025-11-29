@@ -8,8 +8,9 @@ services:
       PROXY_URL: ${PROXY_URL}
       PUID: ${PUID}
       TZ: ${TZ}
-    image: yidadaa/chatgpt-next-web:v2.16.0
+    image: yidadaa/chatgpt-next-web:v2.16.1
     ports:
     - protocol: tcp
       published: 3000
       target: 3000
+    restart: 'no'

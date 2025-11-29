@@ -10,6 +10,7 @@ services:
     - protocol: tcp
       published: 10280
       target: 80
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /config

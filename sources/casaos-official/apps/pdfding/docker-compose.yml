@@ -12,10 +12,11 @@ services:
     - protocol: tcp
       published: 8000
       target: 8000
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/db
+    - source: ${CONTAINER_DATA_ROOT}/db
       target: /home/nonroot/pdfding/db
       type: bind
-    - source: /AppData/$AppID/media
+    - source: ${CONTAINER_DATA_ROOT}/media
       target: /home/nonroot/pdfding/media
       type: bind

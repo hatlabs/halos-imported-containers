@@ -11,10 +11,11 @@ services:
     - protocol: tcp
       published: 6500
       target: 6500
+    restart: 'no'
     volumes:
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /data/downloads
       type: bind
-    - source: /AppData/$AppID/db
+    - source: ${CONTAINER_DATA_ROOT}/db
       target: /data/db
       type: bind

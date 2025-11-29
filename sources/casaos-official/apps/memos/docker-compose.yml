@@ -10,6 +10,7 @@ services:
     - protocol: tcp
       published: 5230
       target: 5230
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/memos
       target: /var/opt/memos

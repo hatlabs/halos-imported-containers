@@ -43,20 +43,22 @@ services:
       WEAVIATE_ENDPOINT: ${WEAVIATE_ENDPOINT}
       WEB_API_CORS_ALLOW_ORIGINS: ${WEB_API_CORS_ALLOW_ORIGINS}
     image: langgenius/dify-api:0.12.1
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/app/api/storage
+    - source: ${CONTAINER_DATA_ROOT}/data/app/api/storage
       target: /app/api/storage
       type: bind
   config:
     image: ns2kracy/dify-config:latest
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/nginx
+    - source: ${CONTAINER_DATA_ROOT}/data/nginx
       target: /configs/nginx
       type: bind
-    - source: /AppData/$AppID/data/ssrf_proxy
+    - source: ${CONTAINER_DATA_ROOT}/data/ssrf_proxy
       target: /configs/ssrf_proxy
       type: bind
-    - source: /AppData/$AppID/data/sandbox
+    - source: ${CONTAINER_DATA_ROOT}/data/sandbox
       target: /configs/sandbox
       type: bind
   db:
@@ -70,8 +72,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     image: postgres:15-alpine
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/db/data
+    - source: ${CONTAINER_DATA_ROOT}/data/db/data
       target: /var/lib/postgresql/data
       type: bind
   nginx:
@@ -80,8 +83,9 @@ services:
     - protocol: tcp
       published: 3701
       target: 80
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/nginx
+    - source: ${CONTAINER_DATA_ROOT}/data/nginx
       target: /etc/nginx
       type: bind
   redis:
@@ -90,8 +94,9 @@ services:
     environment:
       REDISCLI_AUTH: ${REDISCLI_AUTH}
     image: redis:6-alpine
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/redis/data
+    - source: ${CONTAINER_DATA_ROOT}/data/redis/data
       target: /data
       type: bind
   sandbox:
@@ -104,8 +109,9 @@ services:
       SANDBOX_PORT: ${SANDBOX_PORT}
       WORKER_TIMEOUT: ${WORKER_TIMEOUT}
     image: langgenius/dify-sandbox:0.2.10
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/sandbox/dependencies
+    - source: ${CONTAINER_DATA_ROOT}/data/sandbox/dependencies
       target: /dependencies
       type: bind
   ssrf_proxy:
@@ -116,8 +122,9 @@ services:
       SANDBOX_HOST: ${SANDBOX_HOST}
       SANDBOX_PORT: ${SANDBOX_PORT}
     image: ubuntu/squid:latest
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/ssrf_proxy
+    - source: ${CONTAINER_DATA_ROOT}/data/ssrf_proxy
       target: /etc/squid
       type: bind
   weaviate:
@@ -133,8 +140,9 @@ services:
       PERSISTENCE_DATA_PATH: ${PERSISTENCE_DATA_PATH}
       QUERY_DEFAULTS_LIMIT: ${QUERY_DEFAULTS_LIMIT}
     image: semitechnologies/weaviate:1.19.0
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/weaviate
+    - source: ${CONTAINER_DATA_ROOT}/data/weaviate
       target: /var/lib/weaviate
       type: bind
   web:
@@ -142,6 +150,7 @@ services:
       APP_API_URL: ${APP_API_URL}
       CONSOLE_API_URL: ${CONSOLE_API_URL}
     image: langgenius/dify-web:0.12.1
+    restart: 'no'
   worker:
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL}
@@ -164,7 +173,8 @@ services:
       WEAVIATE_API_KEY: ${WEAVIATE_API_KEY}
       WEAVIATE_ENDPOINT: ${WEAVIATE_ENDPOINT}
     image: langgenius/dify-api:0.12.1
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/app/api/storage
+    - source: ${CONTAINER_DATA_ROOT}/data/app/api/storage
       target: /app/api/storage
       type: bind

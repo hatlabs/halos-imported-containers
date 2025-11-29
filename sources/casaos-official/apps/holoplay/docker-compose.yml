@@ -6,3 +6,4 @@ services:
     - protocol: tcp
       published: 3000
       target: 3000
+    restart: 'no'

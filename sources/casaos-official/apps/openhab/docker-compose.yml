@@ -6,6 +6,7 @@ services:
       PGID: ${PGID}
       PUID: ${PUID}
     image: openhab/openhab:4.3.3
+    restart: 'no'
     volumes:
     - read_only: true
       source: /etc/localtime
@@ -15,12 +16,12 @@ services:
       source: /etc/timezone
       target: /etc/timezone
       type: bind
-    - source: /AppData/$AppID/addons
+    - source: ${CONTAINER_DATA_ROOT}/addons
       target: /openhab/addons
       type: bind
-    - source: /AppData/$AppID/conf
+    - source: ${CONTAINER_DATA_ROOT}/conf
       target: /openhab/conf
       type: bind
-    - source: /AppData/$AppID/userdata
+    - source: ${CONTAINER_DATA_ROOT}/userdata
       target: /openhab/userdata
       type: bind

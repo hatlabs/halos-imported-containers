@@ -19,8 +19,9 @@ services:
     - protocol: udp
       published: 21027
       target: 21027
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
     - source: ${CONTAINER_DATA_ROOT}/DATA

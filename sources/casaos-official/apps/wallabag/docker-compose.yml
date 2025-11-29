@@ -9,7 +9,8 @@ services:
     - protocol: tcp
       published: 25661
       target: 80
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/images
+    - source: ${CONTAINER_DATA_ROOT}/images
       target: /var/www/wallabag/web/assets/images
       type: bind

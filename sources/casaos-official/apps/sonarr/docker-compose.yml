@@ -10,13 +10,14 @@ services:
     - protocol: tcp
       published: 8989
       target: 8989
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Media/TV Shows
+    - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
       target: /tv
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind

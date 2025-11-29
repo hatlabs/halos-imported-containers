@@ -11,8 +11,9 @@ services:
     - protocol: tcp
       published: 8181
       target: 8080
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
     - source: ${CONTAINER_DATA_ROOT}/DATA

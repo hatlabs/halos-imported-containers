@@ -12,7 +12,8 @@ services:
     - protocol: tcp
       published: 222
       target: 22
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /data
       type: bind

@@ -10,13 +10,14 @@ services:
     - protocol: tcp
       published: 8787
       target: 8787
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Media/Books
+    - source: ${CONTAINER_DATA_ROOT}/Media/Books
       target: /books
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind

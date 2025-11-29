@@ -13,10 +13,11 @@ services:
     - protocol: tcp
       published: 9666
       target: 9666
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind

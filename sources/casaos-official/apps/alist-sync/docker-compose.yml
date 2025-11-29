@@ -8,7 +8,8 @@ services:
     - protocol: tcp
       published: 52441
       target: 52441
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /app/data
       type: bind

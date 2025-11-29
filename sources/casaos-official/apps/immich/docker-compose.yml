@@ -21,6 +21,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
     image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:739cdd626151ff1f796dc95a6591b55a714f341c737e27f045019ceabf8e8c52
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/pgdata
       target: /var/lib/postgresql/data
@@ -31,6 +32,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_USERNAME: ${DB_USERNAME}
     image: altran1502/immich-machine-learning:v1.132.3
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/model-cache
       target: /cache
@@ -45,8 +47,9 @@ services:
     - protocol: tcp
       published: 2283
       target: 2283
+    restart: 'no'
     volumes:
-    - source: /Gallery/immich
+    - source: ${CONTAINER_DATA_ROOT}/Gallery/immich
       target: /usr/src/app/upload
       type: bind
     - read_only: true
@@ -55,6 +58,7 @@ services:
       type: bind
   redis:
     image: docker.io/redis:6.2-alpine@sha256:148bb5411c184abd288d9aaed139c98123eeb8824c5d3fce03cf721db58066d8
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/redis
       target: /data

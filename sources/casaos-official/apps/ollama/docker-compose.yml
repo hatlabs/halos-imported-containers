@@ -6,7 +6,8 @@ services:
     - protocol: tcp
       published: 11434
       target: 11434
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/
+    - source: ${CONTAINER_DATA_ROOT}/
       target: /root/.ollama
       type: bind

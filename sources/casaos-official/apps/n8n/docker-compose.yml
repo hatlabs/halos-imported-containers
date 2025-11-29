@@ -9,7 +9,8 @@ services:
     - protocol: tcp
       published: 5678
       target: 5678
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID
+    - source: ${CONTAINER_DATA_ROOT}
       target: /home/node/.n8n
       type: bind

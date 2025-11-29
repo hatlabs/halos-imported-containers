@@ -10,20 +10,21 @@ services:
     - protocol: tcp
       published: 19200
       target: 5000
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /app/Data
       type: bind
-    - source: /AppData/$AppID/logs
+    - source: ${CONTAINER_DATA_ROOT}/logs
       target: /app/Logs
       type: bind
-    - source: /AppData/$AppID/common
+    - source: ${CONTAINER_DATA_ROOT}/common
       target: /app/common
       type: bind
-    - source: /AppData/$AppID/temp
+    - source: ${CONTAINER_DATA_ROOT}/temp
       target: /temp
       type: bind
-    - source: /Media
+    - source: ${CONTAINER_DATA_ROOT}/Media
       target: /Media
       type: bind
     - source: /var/run/docker.sock

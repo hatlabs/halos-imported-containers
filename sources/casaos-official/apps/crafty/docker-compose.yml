@@ -14,6 +14,7 @@ services:
     - protocol: udp
       published: 19132
       target: 19132
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/backups
       target: /crafty/backups

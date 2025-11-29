@@ -20,10 +20,11 @@ services:
     - protocol: tcp
       published: 3129
       target: 3129
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /output
       type: bind

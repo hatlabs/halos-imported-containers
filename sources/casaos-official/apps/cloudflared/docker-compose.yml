@@ -6,7 +6,8 @@ services:
     - protocol: tcp
       published: 14333
       target: 14333
+    restart: 'no'
     volumes:
-    - source: /AppData/casaos-cloudflared/config
+    - source: ${CONTAINER_DATA_ROOT}/AppData/casaos-cloudflared/config
       target: /config
       type: bind

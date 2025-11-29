@@ -4,11 +4,12 @@ services:
     environment:
       CRON_MIN: ${CRON_MIN}
       TZ: ${TZ}
-    image: freshrss/freshrss:1.26.0
+    image: freshrss/freshrss:1.27.1
     ports:
     - protocol: tcp
       published: 8749
       target: 80
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/data
       target: /var/www/FreshRSS/data

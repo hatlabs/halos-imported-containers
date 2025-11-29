@@ -6,6 +6,7 @@ services:
       PUID: ${PUID}
       TZ: ${TZ}
     image: mongo:4.4.22
+    restart: 'no'
   petio:
     environment:
       PGID: ${PGID}
@@ -16,6 +17,7 @@ services:
     - protocol: tcp
       published: 7777
       target: 7777
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /app/api/config

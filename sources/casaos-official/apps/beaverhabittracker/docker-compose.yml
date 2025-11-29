@@ -11,7 +11,8 @@ services:
     - protocol: tcp
       published: 15580
       target: 8080
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/
+    - source: ${CONTAINER_DATA_ROOT}/
       target: /app/.user
       type: bind

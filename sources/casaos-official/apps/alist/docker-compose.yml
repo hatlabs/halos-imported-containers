@@ -6,7 +6,8 @@ services:
     - protocol: tcp
       published: 5244
       target: 5244
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /opt/alist/data
       type: bind

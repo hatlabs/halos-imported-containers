@@ -11,10 +11,11 @@ services:
     - protocol: tcp
       published: 8083
       target: 8083
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Media/Books
+    - source: ${CONTAINER_DATA_ROOT}/Media/Books
       target: /books
       type: bind

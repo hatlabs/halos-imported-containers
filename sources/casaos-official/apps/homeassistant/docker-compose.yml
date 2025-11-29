@@ -6,8 +6,9 @@ services:
       PUID: ${PUID}
       TZ: ${TZ}
     image: homeassistant/home-assistant:2025.7
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
     - read_only: true

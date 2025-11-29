@@ -2,6 +2,7 @@ name: v2raya
 services:
   v2raya:
     image: mzz2017/v2raya:v2.2.6.7
+    restart: 'no'
     volumes:
     - read_only: true
       source: ${CONTAINER_DATA_ROOT}/lib/modules
@@ -10,6 +11,6 @@ services:
     - source: /etc/resolv.conf
       target: /etc/resolv.conf
       type: bind
-    - source: /AppData/$AppID
+    - source: ${CONTAINER_DATA_ROOT}
       target: /etc/v2raya
       type: bind

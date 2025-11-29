@@ -10,6 +10,7 @@ services:
     - protocol: tcp
       published: 8000
       target: 8000
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/data
       target: /var/file_drop_files

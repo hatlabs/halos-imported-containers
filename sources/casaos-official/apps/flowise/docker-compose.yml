@@ -12,12 +12,13 @@ services:
       LOG_PATH: ${LOG_PATH}
       PORT: ${PORT}
       SECRETKEY_PATH: ${SECRETKEY_PATH}
-    image: flowiseai/flowise:3.0.4
+    image: flowiseai/flowise:3.0.11
     ports:
     - protocol: tcp
       published: 3025
       target: 3025
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID
+    - source: ${CONTAINER_DATA_ROOT}
       target: /root/.flowise
       type: bind

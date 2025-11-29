@@ -9,13 +9,14 @@ services:
     - protocol: tcp
       published: 7860
       target: 7860
+    restart: 'no'
     volumes:
-    - source: /AppData/Stable-Diffusion-WebUI/models
+    - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/models
       target: /data/models
       type: bind
-    - source: /AppData/Stable-Diffusion-WebUI/outputs
+    - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/outputs
       target: /data/outputs
       type: bind
-    - source: /AppData/Stable-Diffusion-WebUI/config
+    - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/config
       target: /data/config
       type: bind

@@ -9,8 +9,9 @@ services:
       PUID: ${PUID}
       TZ: ${TZ}
       UMASK: ${UMASK}
-    image: ghcr.io/flaresolverr/flaresolverr:v3.3.25
+    image: ghcr.io/flaresolverr/flaresolverr:v3.4.5
     ports:
     - protocol: tcp
       published: 8191
       target: 8191
+    restart: 'no'

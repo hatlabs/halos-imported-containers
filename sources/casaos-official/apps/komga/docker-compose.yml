@@ -9,11 +9,12 @@ services:
     - protocol: tcp
       published: 25600
       target: 25600
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /data
       type: bind
     - source: /etc/timezone

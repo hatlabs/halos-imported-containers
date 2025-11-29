@@ -17,8 +17,9 @@ services:
     - protocol: tcp
       published: 18010
       target: 8000
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /data
       type: bind
   archivebox_novnc:
@@ -31,6 +32,7 @@ services:
     - protocol: tcp
       published: 18082
       target: 8080
+    restart: 'no'
   archivebox_scheduler:
     command:
     - schedule
@@ -43,15 +45,17 @@ services:
       SEARCH_BACKEND_PASSWORD: ${SEARCH_BACKEND_PASSWORD}
       TIMEOUT: ${TIMEOUT}
     image: archivebox/archivebox:0.7.3
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /data
       type: bind
   archivebox_sonic:
     environment:
       SEARCH_BACKEND_PASSWORD: ${SEARCH_BACKEND_PASSWORD}
     image: archivebox/sonic:1.4.9
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data/sonic
+    - source: ${CONTAINER_DATA_ROOT}/data/sonic
       target: /var/lib/sonic/store
       type: bind

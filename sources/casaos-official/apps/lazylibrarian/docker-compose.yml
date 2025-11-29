@@ -11,11 +11,12 @@ services:
     - protocol: tcp
       published: 5299
       target: 5299
+    restart: 'no'
     volumes:
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind
-    - source: /Media/Books
+    - source: ${CONTAINER_DATA_ROOT}/Media/Books
       target: /books
       type: bind
     - source: ${CONTAINER_DATA_ROOT}/config

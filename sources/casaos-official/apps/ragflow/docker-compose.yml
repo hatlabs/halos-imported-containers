@@ -29,11 +29,12 @@ services:
     - protocol: tcp
       published: 9382
       target: 9382
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/ragflow-logs
+    - source: ${CONTAINER_DATA_ROOT}/ragflow-logs
       target: /ragflow/logs
       type: bind
-    - source: /AppData/$AppID/history_data_agent
+    - source: ${CONTAINER_DATA_ROOT}/history_data_agent
       target: /ragflow/history_data_agent
       type: bind
   ragflow-es01:
@@ -54,8 +55,9 @@ services:
     - protocol: tcp
       published: 9200
       target: 9200
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/es01
+    - source: ${CONTAINER_DATA_ROOT}/es01
       target: /usr/share/elasticsearch/data
       type: bind
   ragflow-infinity:
@@ -72,8 +74,9 @@ services:
     - protocol: tcp
       published: 15432
       target: 5432
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/infinity
+    - source: ${CONTAINER_DATA_ROOT}/infinity
       target: /var/infinity
       type: bind
   ragflow-minio:
@@ -94,8 +97,9 @@ services:
     - protocol: tcp
       published: 9001
       target: 9001
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/minio
+    - source: ${CONTAINER_DATA_ROOT}/minio
       target: /data
       type: bind
   ragflow-mysql:
@@ -115,8 +119,9 @@ services:
     - protocol: tcp
       published: 5455
       target: 3306
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/mysql
+    - source: ${CONTAINER_DATA_ROOT}/mysql
       target: /var/lib/mysql
       type: bind
   ragflow-opensearch01:
@@ -139,8 +144,9 @@ services:
     - protocol: tcp
       published: 9201
       target: 9201
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/opensearch01
+    - source: ${CONTAINER_DATA_ROOT}/opensearch01
       target: /usr/share/opensearch/data
       type: bind
   ragflow-redis:
@@ -157,8 +163,9 @@ services:
     - protocol: tcp
       published: 6379
       target: 6379
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/redis
+    - source: ${CONTAINER_DATA_ROOT}/redis
       target: /data
       type: bind
   ragflow-sandbox-executor-manager:
@@ -175,6 +182,7 @@ services:
     - protocol: tcp
       published: 9385
       target: 9385
+    restart: 'no'
     volumes:
     - source: /var/run/docker.sock
       target: /var/run/docker.sock

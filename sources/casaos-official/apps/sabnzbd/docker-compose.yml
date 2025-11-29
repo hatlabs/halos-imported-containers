@@ -10,13 +10,14 @@ services:
     - protocol: tcp
       published: 8282
       target: 8080
+    restart: 'no'
     volumes:
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /incomplete-downloads
       type: bind
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind
