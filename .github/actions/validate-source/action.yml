@@ -123,10 +123,12 @@ runs:
         done
 
         # Run all test suites in Docker with build tools available
-        # Install container-packaging-tools first
+        # Install container-packaging-tools from GitHub
         docker compose -f docker/docker-compose.debtools.yml run --rm debtools bash -c "
           set -e
-          cd ../container-packaging-tools && uv tool install --editable . && cd /workspace
+          echo 'Installing container-packaging-tools...'
+          uv tool install git+https://github.com/hatlabs/container-packaging-tools.git
+          echo 'Running tests...'
           ./tools/test-validate-structure.sh
           ./tools/test-build-source.sh
           ./tools/test-build-all.sh
