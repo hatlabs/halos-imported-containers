@@ -14,7 +14,8 @@ services:
     - protocol: tcp
       published: 51821
       target: 51821
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/wireguard
+    - source: ${CONTAINER_DATA_ROOT}/wireguard
       target: /etc/wireguard
       type: bind

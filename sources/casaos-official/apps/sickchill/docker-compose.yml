@@ -10,13 +10,14 @@ services:
     - protocol: tcp
       published: 8081
       target: 8081
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind
-    - source: /Media/TV Shows
+    - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
       target: /tv
       type: bind

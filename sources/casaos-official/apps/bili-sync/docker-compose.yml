@@ -6,6 +6,7 @@ services:
     - protocol: tcp
       published: 12345
       target: 12345
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}
       target: /app/.config/bili-sync

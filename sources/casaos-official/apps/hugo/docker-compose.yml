@@ -9,10 +9,11 @@ services:
     - protocol: tcp
       published: 1313
       target: 1313
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/project
+    - source: ${CONTAINER_DATA_ROOT}/project
       target: /project
       type: bind
-    - source: /AppData/$AppID/cache
+    - source: ${CONTAINER_DATA_ROOT}/cache
       target: /cache
       type: bind

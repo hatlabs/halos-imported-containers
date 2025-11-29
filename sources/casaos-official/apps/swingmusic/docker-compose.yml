@@ -6,10 +6,11 @@ services:
     - protocol: tcp
       published: 1970
       target: 1970
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Media/Music
+    - source: ${CONTAINER_DATA_ROOT}/Media/Music
       target: /music
       type: bind

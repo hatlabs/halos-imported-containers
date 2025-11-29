@@ -11,8 +11,9 @@ services:
     - protocol: tcp
       published: 18930
       target: 80
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/storage
+    - source: ${CONTAINER_DATA_ROOT}/storage
       target: /var/www/html/storage
       type: bind
   monica-db:
@@ -22,7 +23,8 @@ services:
       MARIADB_RANDOM_ROOT_PASSWORD: ${MARIADB_RANDOM_ROOT_PASSWORD}
       MARIADB_USER: ${MARIADB_USER}
     image: mariadb:11.8.2
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/mysql
+    - source: ${CONTAINER_DATA_ROOT}/mysql
       target: /var/lib/mysql
       type: bind

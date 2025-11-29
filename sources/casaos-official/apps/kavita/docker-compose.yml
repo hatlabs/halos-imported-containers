@@ -8,10 +8,11 @@ services:
     - protocol: tcp
       published: 5150
       target: 5000
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /kavita/config
       type: bind
-    - source: /Media/Manga
+    - source: ${CONTAINER_DATA_ROOT}/Media/Manga
       target: /manga
       type: bind

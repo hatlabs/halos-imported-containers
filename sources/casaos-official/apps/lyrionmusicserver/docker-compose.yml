@@ -17,15 +17,16 @@ services:
     - protocol: udp
       published: 3483
       target: 3483
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
     - read_only: true
-      source: /Media/Music
+      source: ${CONTAINER_DATA_ROOT}/Media/Music
       target: /music
       type: bind
-    - source: /AppData/$AppID/playlists
+    - source: ${CONTAINER_DATA_ROOT}/playlists
       target: /playlist
       type: bind
     - read_only: true

@@ -6,7 +6,8 @@ services:
     - protocol: tcp
       published: 15006
       target: 5006
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID
+    - source: ${CONTAINER_DATA_ROOT}
       target: /data
       type: bind

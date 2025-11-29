@@ -19,13 +19,14 @@ services:
     - protocol: tcp
       published: 51413
       target: 51413
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind
-    - source: /Downloads/watch
+    - source: ${CONTAINER_DATA_ROOT}/Downloads/watch
       target: /watch
       type: bind

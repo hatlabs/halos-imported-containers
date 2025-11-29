@@ -8,7 +8,8 @@ services:
     - protocol: tcp
       published: 3009
       target: 3000
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/home/vocechat-server/data
+    - source: ${CONTAINER_DATA_ROOT}/home/vocechat-server/data
       target: /home/vocechat-server/data
       type: bind

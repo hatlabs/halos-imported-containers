@@ -1,12 +1,13 @@
 name: cloudbeaver
 services:
   cloudbeaver:
-    image: dbeaver/cloudbeaver:25.0.0
+    image: dbeaver/cloudbeaver:25.2.5
     ports:
     - protocol: tcp
       published: 8978
       target: 8978
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/workspace
+    - source: ${CONTAINER_DATA_ROOT}/workspace
       target: /opt/cloudbeaver/workspace
       type: bind

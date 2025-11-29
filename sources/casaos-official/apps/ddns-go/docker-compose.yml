@@ -1,12 +1,13 @@
 name: ddns-go
 services:
   ddns-go:
-    image: jeessy/ddns-go:v6.8.1
+    image: jeessy/ddns-go:v6.13.2
     ports:
     - protocol: tcp
       published: 9876
       target: 9876
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /root
       type: bind

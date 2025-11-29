@@ -11,7 +11,8 @@ services:
     - protocol: tcp
       published: 6806
       target: 6806
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/workspace
+    - source: ${CONTAINER_DATA_ROOT}/workspace
       target: /siyuan/workspace
       type: bind

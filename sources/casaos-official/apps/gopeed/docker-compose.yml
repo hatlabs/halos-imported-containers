@@ -6,10 +6,11 @@ services:
     - protocol: tcp
       published: 9999
       target: 9999
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /app/storage
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /app/Downloads
       type: bind

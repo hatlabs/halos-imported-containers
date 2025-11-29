@@ -15,7 +15,8 @@ services:
     - protocol: tcp
       published: 15324
       target: 3001
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind

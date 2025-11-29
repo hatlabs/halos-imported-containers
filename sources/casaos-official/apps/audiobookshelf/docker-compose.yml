@@ -6,16 +6,17 @@ services:
     - protocol: tcp
       published: 13378
       target: 80
+    restart: 'no'
     volumes:
-    - source: /Media/Audiobooks
+    - source: ${CONTAINER_DATA_ROOT}/Media/Audiobooks
       target: /audiobooks
       type: bind
-    - source: /Media/Podcasts
+    - source: ${CONTAINER_DATA_ROOT}/Media/Podcasts
       target: /podcasts
       type: bind
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /AppData/$AppID/metadata
+    - source: ${CONTAINER_DATA_ROOT}/metadata
       target: /metadata
       type: bind

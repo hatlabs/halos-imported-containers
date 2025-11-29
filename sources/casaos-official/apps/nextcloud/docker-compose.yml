@@ -9,7 +9,8 @@ services:
     - protocol: tcp
       published: 10443
       target: 443
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/var/www/html
+    - source: ${CONTAINER_DATA_ROOT}/var/www/html
       target: /var/www/html
       type: bind

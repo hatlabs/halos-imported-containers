@@ -6,7 +6,8 @@ services:
     - protocol: tcp
       published: 8090
       target: 8090
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/pb_data
+    - source: ${CONTAINER_DATA_ROOT}/pb_data
       target: /pb_data
       type: bind

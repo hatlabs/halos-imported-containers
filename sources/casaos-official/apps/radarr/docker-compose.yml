@@ -10,13 +10,14 @@ services:
     - protocol: tcp
       published: 7878
       target: 7878
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Media/Movies
+    - source: ${CONTAINER_DATA_ROOT}/Media/Movies
       target: /movies
       type: bind
-    - source: /Downloads
+    - source: ${CONTAINER_DATA_ROOT}/Downloads
       target: /downloads
       type: bind

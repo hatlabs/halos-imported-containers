@@ -8,13 +8,14 @@ services:
     - protocol: tcp
       published: 8081
       target: 8081
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID
+    - source: ${CONTAINER_DATA_ROOT}
       target: /config
       type: bind
-    - source: /AppData/$AppID/Downloads/Television
+    - source: ${CONTAINER_DATA_ROOT}/Downloads/Television
       target: /downloads
       type: bind
-    - source: /AppData/$AppID/Media/Television
+    - source: ${CONTAINER_DATA_ROOT}/Media/Television
       target: /tv
       type: bind

@@ -9,6 +9,7 @@ services:
     - protocol: tcp
       published: 34400
       target: 34400
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /home/threadfin/conf/data

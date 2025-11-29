@@ -15,7 +15,8 @@ services:
     - protocol: tcp
       published: 8888
       target: 8888
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/notebooks
+    - source: ${CONTAINER_DATA_ROOT}/notebooks
       target: /opt/notebooks
       type: bind

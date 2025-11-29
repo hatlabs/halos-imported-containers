@@ -6,7 +6,7 @@ services:
       PGID: ${PGID}
       PUID: ${PUID}
       TZ: ${TZ}
-    image: linuxserver/deluge:2.1.1
+    image: linuxserver/deluge:2.2.0
     ports:
     - protocol: tcp
       published: 8112
@@ -17,8 +17,9 @@ services:
     - protocol: udp
       published: 6881
       target: 6881
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
     - source: ${CONTAINER_DATA_ROOT}/DATA

@@ -7,7 +7,7 @@ services:
       PGID: ${PGID}
       PUID: ${PUID}
       TZ: ${TZ}
-    image: linuxserver/emby:4.8.10
+    image: linuxserver/emby:4.9.1
     ports:
     - protocol: tcp
       published: 8096
@@ -15,13 +15,14 @@ services:
     - protocol: tcp
       published: 8920
       target: 8920
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Media/TV Shows
+    - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
       target: /data/tvshows
       type: bind
-    - source: /Media/Movies
+    - source: ${CONTAINER_DATA_ROOT}/Media/Movies
       target: /data/movies
       type: bind

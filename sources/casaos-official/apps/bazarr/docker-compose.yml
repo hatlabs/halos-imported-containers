@@ -10,11 +10,12 @@ services:
     - protocol: tcp
       published: 6767
       target: 6767
+    restart: 'no'
     volumes:
-    - source: /Media/Movies
+    - source: ${CONTAINER_DATA_ROOT}/Media/Movies
       target: /movies
       type: bind
-    - source: /Media/TV Shows
+    - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
       target: /tv
       type: bind
     - source: ${CONTAINER_DATA_ROOT}/config

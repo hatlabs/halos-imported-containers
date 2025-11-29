@@ -6,3 +6,4 @@ services:
     - protocol: tcp
       published: 17638
       target: 80
+    restart: 'no'

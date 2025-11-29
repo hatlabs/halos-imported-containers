@@ -11,6 +11,7 @@ services:
     - protocol: tcp
       published: 61209
       target: 61209
+    restart: 'no'
     volumes:
     - source: /var/run/docker.sock
       target: /var/run/docker.sock

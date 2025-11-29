@@ -8,3 +8,4 @@ services:
     - protocol: tcp
       published: 8183
       target: 80
+    restart: 'no'

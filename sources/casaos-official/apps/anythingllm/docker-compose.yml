@@ -6,6 +6,7 @@ services:
     - protocol: tcp
       published: 3051
       target: 3001
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/storage
       target: /app/server/storage

@@ -6,14 +6,15 @@ services:
     - protocol: tcp
       published: 19999
       target: 19999
+    restart: 'no'
     volumes:
-    - source: /AppData/Netdata/config
+    - source: ${CONTAINER_DATA_ROOT}/AppData/Netdata/config
       target: /etc/netdata
       type: bind
-    - source: /AppData/Netdata/lib
+    - source: ${CONTAINER_DATA_ROOT}/AppData/Netdata/lib
       target: /var/lib/netdata
       type: bind
-    - source: /AppData/Netdata/cache
+    - source: ${CONTAINER_DATA_ROOT}/AppData/Netdata/cache
       target: /var/cache/netdata
       type: bind
     - source: /etc/passwd

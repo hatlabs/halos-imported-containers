@@ -10,7 +10,8 @@ services:
     - protocol: tcp
       published: 8582
       target: 8000
+    restart: 'no'
     volumes:
-    - source: /Downloads/downtify
+    - source: ${CONTAINER_DATA_ROOT}/Downloads/downtify
       target: /downloads
       type: bind

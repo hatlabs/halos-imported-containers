@@ -9,3 +9,4 @@ services:
     - protocol: tcp
       published: 18877
       target: 7860
+    restart: 'no'

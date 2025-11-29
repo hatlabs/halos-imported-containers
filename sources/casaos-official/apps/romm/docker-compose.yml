@@ -17,20 +17,21 @@ services:
     - protocol: tcp
       published: 8285
       target: 8080
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/resources
+    - source: ${CONTAINER_DATA_ROOT}/resources
       target: /romm/resources
       type: bind
-    - source: /AppData/$AppID/redis-data
+    - source: ${CONTAINER_DATA_ROOT}/redis-data
       target: /redis-data
       type: bind
-    - source: /AppData/$AppID/library
+    - source: ${CONTAINER_DATA_ROOT}/library
       target: /romm/library
       type: bind
-    - source: /AppData/$AppID/assets
+    - source: ${CONTAINER_DATA_ROOT}/assets
       target: /romm/assets
       type: bind
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /romm/config
       type: bind
   romm-db:
@@ -40,7 +41,8 @@ services:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MARIADB_USER: ${MARIADB_USER}
     image: mariadb:11.8.2
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/mysql
+    - source: ${CONTAINER_DATA_ROOT}/mysql
       target: /var/lib/mysql
       type: bind

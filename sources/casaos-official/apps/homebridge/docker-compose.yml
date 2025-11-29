@@ -2,7 +2,8 @@ name: homebridge
 services:
   homebridge:
     image: homebridge/homebridge:latest
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /homebridge
       type: bind

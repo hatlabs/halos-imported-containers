@@ -10,10 +10,11 @@ services:
     - protocol: tcp
       published: 2342
       target: 2342
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/photoprism/storage
+    - source: ${CONTAINER_DATA_ROOT}/photoprism/storage
       target: /photoprism/storage
       type: bind
-    - source: /Gallery
+    - source: ${CONTAINER_DATA_ROOT}/Gallery
       target: /photoprism/originals
       type: bind

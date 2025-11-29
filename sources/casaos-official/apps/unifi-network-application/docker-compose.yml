@@ -10,8 +10,9 @@ services:
     - protocol: tcp
       published: 27017
       target: 27017
+    restart: 'no'
     volumes:
-    - source: /AppData/unifi-db
+    - source: ${CONTAINER_DATA_ROOT}/AppData/unifi-db
       target: /data/db
       type: bind
   unifi-network-application:
@@ -38,6 +39,7 @@ services:
     - protocol: tcp
       published: 8080
       target: 8080
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}
       target: /config

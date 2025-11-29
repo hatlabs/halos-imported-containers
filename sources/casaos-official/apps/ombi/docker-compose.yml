@@ -11,6 +11,7 @@ services:
     - protocol: tcp
       published: 3579
       target: 3579
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /config

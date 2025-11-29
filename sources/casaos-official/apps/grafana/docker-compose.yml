@@ -6,7 +6,8 @@ services:
     - protocol: tcp
       published: 3003
       target: 3000
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/data
+    - source: ${CONTAINER_DATA_ROOT}/data
       target: /var/lib/grafana
       type: bind

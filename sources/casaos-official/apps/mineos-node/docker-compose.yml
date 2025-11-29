@@ -12,6 +12,7 @@ services:
     - protocol: tcp
       published: 8444
       target: 8443
+    restart: 'no'
     volumes:
     - source: /var/games/mineos/minecraft
       target: /var/games/minecraft

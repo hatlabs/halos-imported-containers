@@ -6,8 +6,9 @@ services:
     - protocol: tcp
       published: 8080
       target: 8080
+    restart: 'no'
     volumes:
-    - source: /AppData/Jenkins/data
+    - source: ${CONTAINER_DATA_ROOT}/AppData/Jenkins/data
       target: /data
       type: bind
     - source: /var/lib/docker/volumes/b098c98b2c5dec792246dc33375853c05958ace7c144f4aa157326a6f6c0de4c/_data

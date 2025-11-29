@@ -269,7 +269,7 @@ groups:
   label: General Configuration
 - description: null
   fields:
-  - default: your-openai-api-key-here
+  - default: sk-9f73s3ljTXVcMT3Blb3ljTqtsKiGHXVcMT3BlbkFJLK7U
     description: ''
     id: SECRET_KEY
     label: SECRET_KEY
@@ -311,7 +311,7 @@ groups:
     label: CODE_EXECUTION_API_KEY
     required: false
     type: password
-  - default: your-openai-api-key-here
+  - default: sk-9f73s3ljTXVcMT3Blb3ljTqtsKiGHXVcMT3BlbkFJLK7U
     description: ''
     id: SECRET_KEY
     label: SECRET_KEY

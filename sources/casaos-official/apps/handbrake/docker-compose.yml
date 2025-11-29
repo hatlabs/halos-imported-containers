@@ -6,16 +6,17 @@ services:
     - protocol: tcp
       published: 5800
       target: 5800
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/DATA
       target: /storage
       type: bind
-    - source: /AppData/$AppID/watch
+    - source: ${CONTAINER_DATA_ROOT}/watch
       target: /watch
       type: bind
-    - source: /Media
+    - source: ${CONTAINER_DATA_ROOT}/Media
       target: /output
       type: bind
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind

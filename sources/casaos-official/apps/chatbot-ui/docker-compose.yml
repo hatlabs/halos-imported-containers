@@ -10,3 +10,4 @@ services:
     - protocol: tcp
       published: 3080
       target: 3000
+    restart: 'no'

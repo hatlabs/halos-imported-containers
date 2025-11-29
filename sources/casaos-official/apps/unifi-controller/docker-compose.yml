@@ -35,7 +35,8 @@ services:
     - protocol: udp
       published: 5514
       target: 5514
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind

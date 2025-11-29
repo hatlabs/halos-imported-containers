@@ -9,13 +9,14 @@ services:
     - protocol: tcp
       published: 13333
       target: 3000
+    restart: 'no'
     volumes:
     - source: /var/run/docker.sock
       target: /var/run/docker.sock
       type: bind
-    - source: /AppData/$AppID/openhands
+    - source: ${CONTAINER_DATA_ROOT}/openhands
       target: /.openhands
       type: bind
-    - source: /AppData/$AppID/workspace
+    - source: ${CONTAINER_DATA_ROOT}/workspace
       target: /opt/workspace_base
       type: bind

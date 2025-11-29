@@ -19,11 +19,12 @@ services:
     - protocol: tcp
       published: 1901
       target: 1900
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Media
+    - source: ${CONTAINER_DATA_ROOT}/Media
       target: /Media
       type: bind
     - source: ${CONTAINER_DATA_ROOT}/opt/vc/lib

@@ -10,13 +10,14 @@ services:
     - protocol: tcp
       published: 8200
       target: 8200
+    restart: 'no'
     volumes:
-    - source: /AppData/$AppID/config
+    - source: ${CONTAINER_DATA_ROOT}/config
       target: /config
       type: bind
-    - source: /Duplicati/backups
+    - source: ${CONTAINER_DATA_ROOT}/Duplicati/backups
       target: /backups
       type: bind
-    - source: /Duplicati/source
+    - source: ${CONTAINER_DATA_ROOT}/Duplicati/source
       target: /source
       type: bind

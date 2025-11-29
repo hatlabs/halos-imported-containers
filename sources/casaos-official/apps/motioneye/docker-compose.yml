@@ -6,10 +6,11 @@ services:
     - protocol: tcp
       published: 8765
       target: 8765
+    restart: 'no'
     volumes:
     - source: ${CONTAINER_DATA_ROOT}/config
       target: /etc/motioneye
       type: bind
-    - source: /Media/motioneye
+    - source: ${CONTAINER_DATA_ROOT}/Media/motioneye
       target: /var/lib/motioneye
       type: bind

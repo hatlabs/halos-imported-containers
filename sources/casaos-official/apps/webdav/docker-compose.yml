@@ -12,7 +12,8 @@ services:
     - protocol: tcp
       published: 5005
       target: 80
+    restart: 'no'
     volumes:
-    - source: /media/ZimaOS-HD/Media
+    - source: ${CONTAINER_DATA_ROOT}/media/ZimaOS-HD/Media
       target: /media
       type: bind
