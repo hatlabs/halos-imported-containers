@@ -1,0 +1,213 @@
+# GitHub Actions Workflow for Main Branch Build and Publish
+# This workflow builds and publishes {SOURCE_DISPLAY_NAME} packages to unstable channel on merge to main
+#
+# TEMPLATE USAGE:
+# 1. Copy this file to: .github/workflows/main-{source}.yml
+# 2. Replace {SOURCE_DISPLAY_NAME} with the human-readable source name (e.g., "CasaOS", "Runtipi")
+# 3. Replace {source} with the source directory name (lowercase, e.g., "casaos", "runtipi")
+# 4. Update paths filter to match your source directory
+# 5. Remove this comment block and the .template extension
+
+name: Main - {SOURCE_DISPLAY_NAME}
+
+# TRIGGER CONFIGURATION
+# This workflow runs when changes are pushed to main branch
+# Path filters ensure it only runs when relevant files change
+on:
+  push:
+    branches:
+      - main
+    paths:
+      # REQUIRED: Update this to match your source directory
+      # Example: 'sources/runtipi/**' for runtipi source
+      - 'sources/{source}/**'
+
+      # These paths trigger workflow for all sources (shared infrastructure)
+      - 'tools/**'              # Build scripts affect all sources
+      - '.github/actions/**'    # Shared actions affect all sources
+      - '.github/workflows/main-{source}.yml'  # This workflow file itself
+
+# PERMISSIONS
+# Requires write permission to create releases
+permissions:
+  contents: write  # Required for creating releases
+
+jobs:
+  # JOB 1: BUILD
+  # Builds Debian packages for this source
+  build:
+    name: Build {SOURCE_DISPLAY_NAME} Packages
+    runs-on: ubuntu-latest
+    outputs:
+      # TEMPORARY OUTPUT: Needed during implementation phase when sources may not exist yet
+      # This output tracks whether packages were built successfully
+      # Once all sources are fully implemented, this will always be 'true' and can be removed
+      has-packages: ${{ steps.check-packages.outputs.has-packages }}
+    steps:
+      # STEP: Checkout repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # STEP: Build packages using repository build action
+      # This action handles Python setup, dependency installation, and building
+      - name: Build packages
+        id: build
+        uses: ./.github/actions/build-deb
+        with:
+          # REQUIRED: Update this to your source name
+          source: {source}
+
+      # STEP: Check if packages were built (TEMPORARY - see note below)
+      # TEMPORARY: This check is needed during implementation phase
+      # The build-deb action skips building when sources don't exist yet (intentional design)
+      # This step detects that case and prevents artifact upload/publish failures
+      # Remove this step once sources/{source}/ is fully implemented and always contains apps
+      - name: Check if packages were built
+        id: check-packages
+        run: |
+          if ls build/*.deb 1> /dev/null 2>&1; then
+            echo "has-packages=true" >> $GITHUB_OUTPUT
+            echo "::notice::Found packages to upload"
+          else
+            echo "has-packages=false" >> $GITHUB_OUTPUT
+            echo "::notice::No packages built (source not yet implemented)"
+          fi
+
+      # STEP: Upload build artifacts
+      # TEMPORARY: The 'if' conditional prevents upload failures when no packages were built
+      # Remove the 'if' condition once sources are always present and packages are always built
+      - name: Upload build artifacts
+        if: steps.check-packages.outputs.has-packages == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          # Artifact name includes source and channel for clarity
+          name: packages-{source}-unstable
+          path: |
+            build/*.deb        # Debian packages
+            build/*.buildinfo  # Build information
+            build/*.changes    # Debian changes files
+          retention-days: 30   # Keep artifacts for 30 days
+
+  # JOB 2: PUBLISH TO UNSTABLE CHANNEL
+  # Publishes built packages to APT repository unstable channel
+  # Runs after build succeeds
+  publish-unstable:
+    name: Publish to Unstable Channel
+    runs-on: ubuntu-latest
+    needs: build  # Wait for build to complete
+    # TEMPORARY: This conditional is needed during implementation phase
+    # It prevents this job from running (and failing) when the build job didn't produce packages
+    # Remove this 'if' condition once sources/{source}/ is fully implemented
+    if: needs.build.outputs.has-packages == 'true'
+    steps:
+      # STEP: Checkout repository code
+      # fetch-depth: 0 ensures all tags are fetched for accurate tag counting
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history and tags
+
+      # STEP: Download build artifacts from previous job
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: packages-{source}-unstable
+          path: build
+
+      # STEP: List packages to publish (for logging/debugging)
+      - name: List packages to publish
+        run: |
+          echo "::notice::Publishing to unstable channel"
+          echo "::notice::Packages to publish:"
+          ls -lh build/*.deb
+
+      # STEP: Generate unique release tag
+      # Tag format: YYYY-MM-DD+N (where N is incremented for multiple releases per day)
+      # This ensures each release has a unique identifier
+      - name: Generate release tag
+        id: release-tag
+        run: |
+          # Create unique release tag: YYYY-MM-DD+N
+          DATE=$(date -u +%Y-%m-%d)
+
+          # Fetch all tags to count today's releases
+          git fetch --tags --quiet
+
+          # Count existing tags for today's date
+          REVISION=$(git tag -l "${DATE}+*" | wc -l | tr -d ' ')
+          REVISION=$((REVISION + 1))
+
+          RELEASE_TAG="${DATE}+${REVISION}"
+          echo "tag=${RELEASE_TAG}" >> $GITHUB_OUTPUT
+          echo "::notice::Release tag: ${RELEASE_TAG}"
+
+      # STEP: Create GitHub pre-release
+      # Creates a draft pre-release with packages attached
+      # Pre-release flag indicates this is unstable channel
+      - name: Create pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release-tag.outputs.tag }}
+          # REQUIRED: Update source name in release title
+          name: "{SOURCE_DISPLAY_NAME} Unstable - ${{ steps.release-tag.outputs.tag }}"
+          body: |
+            ## {SOURCE_DISPLAY_NAME} Container Packages - Unstable Channel
+
+            Auto-generated pre-release from main branch.
+
+            **Commit**: ${{ github.sha }}
+            **Timestamp**: ${{ steps.release-tag.outputs.tag }}
+
+            ### Packages
+
+            This release contains Debian packages for all {SOURCE_DISPLAY_NAME} apps.
+            These packages are automatically published to apt.hatlabs.fi unstable channel.
+
+            ### Installation
+
+            ```bash
+            # Add HaLOS APT repository (if not already added)
+            curl -fsSL https://apt.hatlabs.fi/halos-archive-keyring.gpg | sudo gpg --dearmor -o /usr/share/keyrings/halos-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/halos-archive-keyring.gpg] https://apt.hatlabs.fi trixie-unstable main" | sudo tee /etc/apt/sources.list.d/halos-unstable.list
+
+            # Update and install
+            sudo apt update
+            # REQUIRED: Update package name to match your source
+            sudo apt install {source}-container-store
+            ```
+          prerelease: true         # Mark as pre-release (unstable channel)
+          files: build/*.deb       # Attach all .deb files
+          fail_on_unmatched_files: true  # Fail if no files found
+
+      # STEP: Dispatch to APT repository
+      # Sends event to apt.hatlabs.fi repository to trigger package import
+      # APT repository will download packages from this release and add them
+      - name: Dispatch to APT repository
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          # REQUIRED: Update APT_REPO_PAT secret in repository settings
+          token: ${{ secrets.APT_REPO_PAT }}
+          repository: hatlabs/apt.hatlabs.fi
+          event-type: package-updated
+          # Payload tells APT repo what to import and where
+          client-payload: |
+            {
+              "repository": "${{ github.repository }}",
+              "distro": "trixie",      # Debian 13
+              "channel": "unstable",   # Unstable channel
+              "component": "main",     # Main component
+              "release_tag": "${{ steps.release-tag.outputs.tag }}"
+            }
+
+      # STEP: Report success (for logging/debugging)
+      - name: Report success
+        run: |
+          echo "=== Unstable Channel Publish Complete ==="
+          echo "Repository: ${{ github.repository }}"
+          echo "Release Tag: ${{ steps.release-tag.outputs.tag }}"
+          echo "Distro: trixie"
+          echo "Channel: unstable"
+          echo "Component: main"
+          echo ""
+          echo "Dispatched to hatlabs/apt.hatlabs.fi"
+          echo "Packages will be available via apt.hatlabs.fi unstable channel"
