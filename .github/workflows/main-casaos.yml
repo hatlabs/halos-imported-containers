@@ -9,6 +9,7 @@ on:
       - 'tools/**'
       - '.github/actions/**'
       - '.github/workflows/main-casaos.yml'
+  workflow_dispatch:  # Allow manual workflow runs
 
 permissions:
   contents: write  # Required for creating releases
