@@ -224,7 +224,7 @@ The build process operates in these phases:
 All packages follow strict naming conventions:
 
 - **App packages**: {source}-{appname}-container (e.g., casaos-uptimekuma-container)
-- **Store packages**: {source}-container-store (e.g., casaos-official-container-store)
+- **Store packages**: {source}-container-store (e.g., casaos-container-store)
 - **All lowercase**: Debian package names must be lowercase
 - **Hyphens only**: No underscores or other special characters
 
@@ -355,16 +355,16 @@ The repository uses Hat Labs shared workflows for standardized publishing only. 
 ### GitHub Actions Structure
 
 **Workflows (.github/workflows/)**: Per-source workflow files
-- pr-casaos-official.yml: PR validation for CasaOS Official source
-- main-casaos-official.yml: Main branch build for CasaOS Official source
-- release-casaos-official.yml: Release build for CasaOS Official source
-- sync-casaos-official.yml: Upstream sync for CasaOS Official source
+- pr-casaos.yml: PR validation for CasaOS source
+- main-casaos.yml: Main branch build for CasaOS source
+- release-casaos.yml: Release build for CasaOS source
+- sync-casaos.yml: Upstream sync for CasaOS source
 - (Repeat pattern for each source: runtipi, casaos-community, etc.)
 
 **Actions (.github/actions/)**: Repository-specific reusable actions
 
 - **build-deb/action.yml**: Build Debian packages for a specific source
-  - Input: `source` (required) - Source name (e.g., "casaos-official")
+  - Input: `source` (required) - Source name (e.g., "casaos")
   - Runs: `./tools/build-source.sh ${{ inputs.source }}`
   - Outputs: All .deb, .buildinfo, .changes files in build/ directory
   - Used by all per-source workflows
@@ -385,8 +385,8 @@ The repository uses Hat Labs shared workflows for standardized publishing only. 
 - validate-structure.sh: Validate a source's structure
 
 **Path Filtering**: Each workflow uses GitHub Actions path filtering to trigger only on changes to its source:
-- pr-casaos-official.yml triggers on: sources/casaos-official/**
-- main-casaos-official.yml triggers on: sources/casaos-official/**
+- pr-casaos.yml triggers on: sources/casaos/**
+- main-casaos.yml triggers on: sources/casaos/**
 - Common files (tools/, docs/) trigger all source workflows
 
 ### Secrets and Configuration
@@ -396,7 +396,7 @@ The repository uses Hat Labs shared workflows for standardized publishing only. 
 **Per-Source Workflow Configuration**:
 - apt-distro: trixie (Debian 13)
 - apt-component: main
-- package-name: {source}-container-store (e.g., casaos-official-container-store)
+- package-name: {source}-container-store (e.g., casaos-container-store)
 - source-dir: sources/{source}/ (path to build)
 
 **Shared Configuration**:

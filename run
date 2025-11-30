@@ -50,7 +50,7 @@ function build-source {
   if [ -z "$source_name" ]; then
     echo "Error: SOURCE_NAME required"
     echo "Usage: ./run build-source SOURCE_NAME"
-    echo "Example: ./run build-source casaos-official"
+    echo "Example: ./run build-source casaos"
     exit 1
   fi
 
@@ -122,7 +122,7 @@ function help {
   echo ""
   echo "Examples:"
   echo "  ./run build-debtools                # First-time setup"
-  echo "  ./run build-source casaos-official  # Build CasaOS packages"
+  echo "  ./run build-source casaos  # Build CasaOS packages"
   echo "  ./run shell                         # Interactive development"
 }
 

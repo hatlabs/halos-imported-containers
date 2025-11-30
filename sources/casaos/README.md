@@ -1,23 +1,23 @@
-# CasaOS Official Source
+# CasaOS Source
 
-Auto-imported container applications from the [CasaOS Official App Store](https://github.com/IceWhaleTech/CasaOS-AppStore).
+Auto-imported container applications from the [CasaOS App Store](https://github.com/IceWhaleTech/CasaOS-AppStore).
 
 ## Overview
 
-This source provides automatic conversion and packaging of applications from the upstream CasaOS Official App Store repository. Applications are automatically converted to HaLOS-compatible Debian packages using the CasaOS converter from container-packaging-tools.
+This source provides automatic conversion and packaging of applications from the upstream CasaOS App Store repository. Applications are automatically converted to HaLOS-compatible Debian packages using the CasaOS converter from container-packaging-tools.
 
 **Statistics**: 147+ applications available
 
 ## Structure
 
 ```
-casaos-official/
+casaos/
 ├── apps/                # Converted application definitions (147+ apps)
 │   ├── app-name-1/     # Individual app directories
 │   ├── app-name-2/     # Each contains metadata.yaml, config.yml, docker-compose.yml
 │   └── ...
 ├── store/               # Store definition and packaging
-│   ├── casaos-official.yaml  # Store configuration for Cockpit
+│   ├── casaos.yaml  # Store configuration for Cockpit
 │   ├── icon.svg              # Store branding (256x256)
 │   └── debian/               # Debian packaging for store package
 │       ├── control
@@ -41,15 +41,15 @@ casaos-official/
 
 All packages from this source use the `casaos-{appname}-container` naming pattern:
 
-- **casaos-jellyfin-container**: Jellyfin media server from CasaOS Official
-- **casaos-uptimekuma-container**: Uptime Kuma monitoring from CasaOS Official
-- **casaos-portainer-container**: Portainer container management from CasaOS Official
+- **casaos-jellyfin-container**: Jellyfin media server from CasaOS
+- **casaos-uptimekuma-container**: Uptime Kuma monitoring from CasaOS
+- **casaos-portainer-container**: Portainer container management from CasaOS
 
 The `casaos-` prefix clearly identifies packages from this source and prevents conflicts with packages from other sources (runtipi, manually curated, etc.).
 
 ## Store Package
 
-The store package `casaos-official-container-store` provides:
+The store package `casaos-container-store` provides:
 
 - **Store definition**: Configuration for Cockpit UI integration
 - **Package filtering**: Includes all `casaos-*-container` packages
@@ -82,7 +82,7 @@ Apps are converted using the `casaos` converter from container-packaging-tools:
 
 ```bash
 # Install the store package
-sudo apt install casaos-official-container-store
+sudo apt install casaos-container-store
 
 # Install individual apps
 sudo apt install casaos-jellyfin-container
@@ -94,11 +94,11 @@ The store package is required for apps to appear in the Cockpit UI, but individu
 
 ## Building
 
-Build all CasaOS Official packages (store + apps):
+Build all CasaOS packages (store + apps):
 
 ```bash
 # From repository root
-./tools/build-source.sh casaos-official
+./tools/build-source.sh casaos
 
 # Output: build/*.deb
 ```
@@ -119,7 +119,7 @@ Apps span multiple categories:
 
 All packages clearly indicate their source:
 
-- **Package prefix**: `casaos-` identifies CasaOS Official origin
+- **Package prefix**: `casaos-` identifies CasaOS origin
 - **Metadata**: Includes upstream URL and original CasaOS repository link
 - **Maintainer**: Hat Labs (as package maintainer)
 - **Upstream License**: Preserved from original app definition

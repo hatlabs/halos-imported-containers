@@ -134,7 +134,7 @@ Individual applications retain their upstream licenses as specified in their ori
 <!--
 TEMPLATE PLACEHOLDERS:
 - {DISPLAY_NAME}: Human-readable source name (e.g., "CasaOS Official")
-- {SOURCE_ID}: Source directory name (e.g., "casaos-official")
+- {SOURCE_ID}: Source directory name (e.g., "casaos")
 - {PREFIX}: Package prefix (e.g., "casaos")
 - {UPSTREAM_NAME}: Upstream repository name
 - {UPSTREAM_URL}: Upstream repository URL

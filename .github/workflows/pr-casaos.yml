@@ -3,10 +3,10 @@ name: PR - CasaOS Official
 on:
   pull_request:
     paths:
-      - 'sources/casaos-official/**'
+      - 'sources/casaos/**'
       - 'tools/**'
       - '.github/actions/**'
-      - '.github/workflows/**casaos-official.yml'
+      - '.github/workflows/**casaos.yml'
 
 permissions:
   contents: read
@@ -23,7 +23,7 @@ jobs:
       - name: Validate source structure
         uses: ./.github/actions/validate-source
         with:
-          source: casaos-official
+          source: casaos
 
   build:
     name: Build CasaOS Official Packages
@@ -37,7 +37,7 @@ jobs:
         id: build
         uses: ./.github/actions/build-deb
         with:
-          source: casaos-official
+          source: casaos
 
       - name: Comment on PR with build results
         uses: actions/github-script@v7
@@ -49,11 +49,11 @@ jobs:
 
             let body;
             if (buildOutcome === 'skipped') {
-              body = `ℹ️ **Build skipped** for casaos-official\n\nSource will be created in Cluster 4 implementation.\n\nWorkflow and actions are ready for testing.`;
+              body = `ℹ️ **Build skipped** for casaos\n\nSource will be created in Cluster 4 implementation.\n\nWorkflow and actions are ready for testing.`;
             } else if (buildOutcome === 'success') {
-              body = `✅ **Build successful** for casaos-official\n\n📦 Built ${packageCount} packages\n\nPackages are available as workflow artifacts for inspection.`;
+              body = `✅ **Build successful** for casaos\n\n📦 Built ${packageCount} packages\n\nPackages are available as workflow artifacts for inspection.`;
             } else {
-              body = `❌ **Build failed** for casaos-official\n\nPlease check the workflow logs for details.`;
+              body = `❌ **Build failed** for casaos\n\nPlease check the workflow logs for details.`;
             }
 
             github.rest.issues.createComment({

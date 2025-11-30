@@ -1,21 +1,21 @@
-name: Main - CasaOS Official
+name: Main - CasaOS
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'sources/casaos-official/**'
+      - 'sources/casaos/**'
       - 'tools/**'
       - '.github/actions/**'
-      - '.github/workflows/main-casaos-official.yml'
+      - '.github/workflows/main-casaos.yml'
 
 permissions:
   contents: read
 
 jobs:
   build:
-    name: Build CasaOS Official Packages
+    name: Build CasaOS Packages
     runs-on: ubuntu-latest
     outputs:
       # TEMPORARY: This output is needed during implementation phase when sources may not exist yet.
@@ -29,12 +29,12 @@ jobs:
         id: build
         uses: ./.github/actions/build-deb
         with:
-          source: casaos-official
+          source: casaos
 
       # TEMPORARY: This check is needed during implementation phase.
       # The build-deb action skips building when sources don't exist yet (intentional design).
       # This step detects that case and prevents artifact upload/publish failures.
-      # Remove this step once sources/casaos-official/ is fully implemented and always contains apps.
+      # Remove this step once sources/casaos/ is fully implemented and always contains apps.
       - name: Check if packages were built
         id: check-packages
         run: |
@@ -52,7 +52,7 @@ jobs:
         if: steps.check-packages.outputs.has-packages == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: packages-casaos-official-unstable
+          name: packages-casaos-unstable
           path: |
             build/*.deb
             build/*.buildinfo
@@ -65,14 +65,14 @@ jobs:
     needs: build
     # TEMPORARY: This conditional is needed during implementation phase when sources may not exist.
     # It prevents this job from running (and failing) when the build job didn't produce packages.
-    # Remove this 'if' condition once sources/casaos-official/ is fully implemented.
+    # Remove this 'if' condition once sources/casaos/ is fully implemented.
     # At that point, the build job will always produce packages and this job should always run.
     if: needs.build.outputs.has-packages == 'true'
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: packages-casaos-official-unstable
+          name: packages-casaos-unstable
           path: build
 
       - name: List packages to publish

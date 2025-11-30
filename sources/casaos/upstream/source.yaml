@@ -4,7 +4,7 @@
 # app store repository.
 
 # Source metadata
-source_id: casaos-official
+source_id: casaos
 source_name: "CasaOS Official"
 source_description: "Official CasaOS App Store - 147+ community applications"
 
@@ -44,11 +44,11 @@ sync:
 
   # PR settings
   pr_options:
-    title_prefix: "sync(casaos-official):"
+    title_prefix: "sync(casaos):"
     auto_merge: false  # Require manual review
     labels:
       - "automated"
-      - "casaos-official"
+      - "casaos"
       - "sync"
 
 # Package metadata defaults

@@ -107,7 +107,7 @@ exit
 ```
 halos-imported-containers/
 ├── sources/                      # Source definitions
-│   ├── casaos-official/          # CasaOS official apps
+│   ├── casaos/          # CasaOS official apps
 │   │   ├── apps/                 # Converted applications (147+ apps)
 │   │   │   ├── uptimekuma/       # Example app
 │   │   │   │   ├── metadata.yaml
@@ -115,7 +115,7 @@ halos-imported-containers/
 │   │   │   │   └── docker-compose.yml
 │   │   │   └── ...
 │   │   ├── store/                # Store definition
-│   │   │   ├── casaos-official.yaml
+│   │   │   ├── casaos.yaml
 │   │   │   └── debian/           # Store package Debian packaging
 │   │   └── upstream/
 │   │       └── source.yaml       # Upstream sync configuration
@@ -132,9 +132,9 @@ halos-imported-containers/
 │
 ├── .github/
 │   ├── workflows/                # Per-source CI/CD workflows
-│   │   ├── pr-casaos-official.yml
-│   │   ├── main-casaos-official.yml
-│   │   └── release-casaos-official.yml
+│   │   ├── pr-casaos.yml
+│   │   ├── main-casaos.yml
+│   │   └── release-casaos.yml
 │   └── actions/                  # Reusable GitHub Actions
 │       ├── build-deb/
 │       └── validate-source/
@@ -158,27 +158,27 @@ halos-imported-containers/
 
 ```bash
 # 1. Create a feature branch
-git checkout -b feat/update-casaos-official
+git checkout -b feat/update-casaos
 
 # 2. Make changes to source files
-# Edit sources/casaos-official/apps/some-app/metadata.yaml
+# Edit sources/casaos/apps/some-app/metadata.yaml
 # or
-# Edit sources/casaos-official/store/casaos-official.yaml
+# Edit sources/casaos/store/casaos.yaml
 
 # 3. Validate changes
 ./run shell
-./tools/validate-structure.sh casaos-official
+./tools/validate-structure.sh casaos
 
 # 4. Build packages to test
-./run build-source casaos-official
+./run build-source casaos
 
 # 5. Inspect build output
 ls -lh build/
 
 # 6. Commit and push
-git add sources/casaos-official/
+git add sources/casaos/
 git commit -m "feat(casaos): update app metadata"
-git push origin feat/update-casaos-official
+git push origin feat/update-casaos
 
 # 7. Create PR
 gh pr create --title "feat(casaos): update app metadata" --body "Description..."
@@ -190,7 +190,7 @@ gh pr create --title "feat(casaos): update app metadata" --body "Description..."
 
 ```bash
 # 1. Build packages locally
-./run build-source casaos-official
+./run build-source casaos
 
 # 2. Copy .deb files to test system
 scp build/casaos-uptimekuma-container_*.deb pi@halos.local:/tmp/
@@ -236,7 +236,7 @@ The `./run` script provides convenient Docker-based builds:
 
 ```bash
 # Build a specific source
-./run build-source casaos-official
+./run build-source casaos
 
 # Build all sources
 ./run build-all
@@ -265,10 +265,10 @@ export PATH="$HOME/.local/bin:$PATH"
 **Build commands:**
 ```bash
 # Validate structure
-./tools/validate-structure.sh casaos-official
+./tools/validate-structure.sh casaos
 
 # Build a specific source
-./tools/build-source.sh casaos-official
+./tools/build-source.sh casaos
 
 # Build all sources
 ./tools/build-all.sh
@@ -282,10 +282,10 @@ Successful builds create:
 
 ```
 build/
-├── casaos-official-container-store_0.1.0_all.deb
+├── casaos-container-store_0.1.0_all.deb
 ├── casaos-uptimekuma-container_1.23.0_all.deb
 ├── casaos-jellyfin-container_10.8.13_all.deb
-└── ... (147+ app packages for casaos-official)
+└── ... (147+ app packages for casaos)
 ```
 
 ## Testing
@@ -297,11 +297,11 @@ build/
 ./tools/validate-structure.sh
 
 # Validate specific source
-./tools/validate-structure.sh casaos-official
+./tools/validate-structure.sh casaos
 
 # Check YAML syntax (requires yq)
-yq eval . sources/casaos-official/store/casaos-official.yaml
-yq eval . sources/casaos-official/upstream/source.yaml
+yq eval . sources/casaos/store/casaos.yaml
+yq eval . sources/casaos/upstream/source.yaml
 ```
 
 ### CI/CD Testing
@@ -325,7 +325,7 @@ gh pr view --web
 
 ```bash
 # Build package
-./run build-source casaos-official
+./run build-source casaos
 
 # Extract package contents to inspect
 dpkg-deb -x build/casaos-uptimekuma-container_*.deb /tmp/test-pkg/
@@ -379,13 +379,13 @@ export PATH="$HOME/.local/bin:$PATH"
 **Solution**:
 ```bash
 # Check for errors in build output
-./run build-source casaos-official 2>&1 | grep -i error
+./run build-source casaos 2>&1 | grep -i error
 
 # Verify source structure
-./tools/validate-structure.sh casaos-official
+./tools/validate-structure.sh casaos
 
 # Check store debian/ directory exists
-ls -la sources/casaos-official/store/debian/
+ls -la sources/casaos/store/debian/
 ```
 
 **Problem**: "dpkg-buildpackage: error: fakeroot not found"
@@ -446,14 +446,14 @@ gh auth login
 **Solution**:
 ```bash
 # Verify path filters - workflows only trigger on relevant changes
-# For casaos-official, modify files in:
-#   - sources/casaos-official/**
+# For casaos, modify files in:
+#   - sources/casaos/**
 #   - tools/**
-#   - .github/workflows/*casaos-official.yml
+#   - .github/workflows/*casaos.yml
 
 # Force CI by modifying a watched path
-touch sources/casaos-official/README.md
-git add sources/casaos-official/README.md
+touch sources/casaos/README.md
+git add sources/casaos/README.md
 git commit -m "chore: trigger CI"
 git push
 ```

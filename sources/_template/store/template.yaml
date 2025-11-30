@@ -6,7 +6,7 @@
 # This file defines how your source appears in the Cockpit container apps UI.
 
 # Store ID (lowercase, hyphens only, matches source directory name)
-# Example: casaos-official, runtipi, custom-apps
+# Example: casaos, runtipi, custom-apps
 id: {SOURCE_ID}
 
 # Display name shown in Cockpit UI

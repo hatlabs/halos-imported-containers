@@ -1,4 +1,4 @@
-Source: casaos-official-container-store
+Source: casaos-container-store
 Section: admin
 Priority: optional
 Maintainer: Hat Labs <info@hatlabs.fi>
@@ -6,14 +6,14 @@ Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.6.0
 Homepage: https://github.com/hatlabs/halos-imported-containers
 
-Package: casaos-official-container-store
+Package: casaos-container-store
 Architecture: all
-Description: CasaOS Official container application store definition for Cockpit APT
- This package provides the store definition and branding for the CasaOS Official
+Description: CasaOS container application store definition for Cockpit APT
+ This package provides the store definition and branding for the CasaOS
  container application store, designed to work with cockpit-apt.
  .
  When installed alongside cockpit-apt, it enables discovery and installation of
- 147+ auto-imported applications from the upstream CasaOS Official App Store.
+ 147+ auto-imported applications from the upstream CasaOS App Store.
  .
  Applications include media servers, home automation, productivity tools,
  networking utilities, storage solutions, and development platforms.
