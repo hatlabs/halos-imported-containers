@@ -104,7 +104,7 @@ jobs:
       - name: Check if packages exist
         id: check
         run: |
-          if compgen -G "build/*.deb" > /dev/null; then
+          if ls build/*.deb 1> /dev/null 2>&1; then
             echo "has-packages=true" >> $GITHUB_OUTPUT
             echo "::notice::Found packages to publish"
           else

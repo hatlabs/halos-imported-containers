@@ -87,13 +87,13 @@ jobs:
             let body;
             if (buildOutcome === 'skipped') {
               // Build was skipped (usually means source not yet implemented)
-              body = `ℹ️ **Build skipped** for {source}\n\nSource will be created in future implementation.\n\nWorkflow and actions are ready for testing.`;
+              body = `ℹ️ **Build skipped** for {SOURCE_DISPLAY_NAME}\n\nSource will be created in future implementation.\n\nWorkflow and actions are ready for testing.`;
             } else if (buildOutcome === 'success') {
               // Build succeeded - report package count
-              body = `✅ **Build successful** for {source}\n\n📦 Built ${packageCount} packages\n\nPackages are available as workflow artifacts for inspection.`;
+              body = `✅ **Build successful** for {SOURCE_DISPLAY_NAME}\n\n📦 Built ${packageCount} packages\n\nPackages are available as workflow artifacts for inspection.`;
             } else {
               // Build failed - direct to logs
-              body = `❌ **Build failed** for {source}\n\nPlease check the workflow logs for details.`;
+              body = `❌ **Build failed** for {SOURCE_DISPLAY_NAME}\n\nPlease check the workflow logs for details.`;
             }
 
             // Post comment to PR

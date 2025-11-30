@@ -65,7 +65,7 @@ jobs:
       - name: Check if packages were built
         id: check-packages
         run: |
-          if compgen -G "build/*.deb" > /dev/null; then
+          if ls build/*.deb 1> /dev/null 2>&1; then
             echo "has-packages=true" >> $GITHUB_OUTPUT
             echo "::notice::Found packages to upload"
           else
@@ -100,6 +100,13 @@ jobs:
     # Remove this 'if' condition once sources/{source}/ is fully implemented
     if: needs.build.outputs.has-packages == 'true'
     steps:
+      # STEP: Checkout repository code
+      # fetch-depth: 0 ensures all tags are fetched for accurate tag counting
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history and tags
+
       # STEP: Download build artifacts from previous job
       - name: Download build artifacts
         uses: actions/download-artifact@v4

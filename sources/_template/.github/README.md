@@ -36,14 +36,18 @@ Each template file contains placeholders that need to be replaced:
 
 ```bash
 # For a source called "runtipi" with display name "Runtipi":
-sed -i '' 's/{SOURCE_DISPLAY_NAME}/Runtipi/g' .github/workflows/pr-runtipi.yml
-sed -i '' 's/{source}/runtipi/g' .github/workflows/pr-runtipi.yml
+# Use platform-agnostic sed with backup extension
+sed -i.bak 's/{SOURCE_DISPLAY_NAME}/Runtipi/g' .github/workflows/pr-runtipi.yml
+sed -i.bak 's/{source}/runtipi/g' .github/workflows/pr-runtipi.yml
 
-sed -i '' 's/{SOURCE_DISPLAY_NAME}/Runtipi/g' .github/workflows/main-runtipi.yml
-sed -i '' 's/{source}/runtipi/g' .github/workflows/main-runtipi.yml
+sed -i.bak 's/{SOURCE_DISPLAY_NAME}/Runtipi/g' .github/workflows/main-runtipi.yml
+sed -i.bak 's/{source}/runtipi/g' .github/workflows/main-runtipi.yml
 
-sed -i '' 's/{SOURCE_DISPLAY_NAME}/Runtipi/g' .github/workflows/release-runtipi.yml
-sed -i '' 's/{source}/runtipi/g' .github/workflows/release-runtipi.yml
+sed -i.bak 's/{SOURCE_DISPLAY_NAME}/Runtipi/g' .github/workflows/release-runtipi.yml
+sed -i.bak 's/{source}/runtipi/g' .github/workflows/release-runtipi.yml
+
+# Clean up backup files
+rm .github/workflows/*.bak
 ```
 
 ### Step 3: Remove Template Comments
