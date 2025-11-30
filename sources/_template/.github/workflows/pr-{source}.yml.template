@@ -1,0 +1,108 @@
+# GitHub Actions Workflow for Pull Request Validation
+# This workflow validates changes to {SOURCE_DISPLAY_NAME} source apps on pull requests
+#
+# TEMPLATE USAGE:
+# 1. Copy this file to: .github/workflows/pr-{source}.yml
+# 2. Replace {SOURCE_DISPLAY_NAME} with the human-readable source name (e.g., "CasaOS Official", "Runtipi Community")
+# 3. Replace {source} with the source directory name (lowercase, e.g., "casaos", "runtipi")
+# 4. Update paths filter to match your source directory
+# 5. Remove this comment block and the .template extension
+
+name: PR - {SOURCE_DISPLAY_NAME}
+
+# TRIGGER CONFIGURATION
+# This workflow runs when a pull request is created or updated
+# Path filters ensure it only runs when relevant files change
+on:
+  pull_request:
+    paths:
+      # REQUIRED: Update this to match your source directory
+      # Example: 'sources/runtipi/**' for runtipi source
+      - 'sources/{source}/**'
+
+      # These paths trigger workflow for all sources (shared infrastructure)
+      - 'tools/**'              # Build scripts affect all sources
+      - '.github/actions/**'    # Shared actions affect all sources
+      - '.github/workflows/**{source}.yml'  # This workflow file itself
+
+# PERMISSIONS
+# Minimal permissions following principle of least privilege
+permissions:
+  contents: read           # Read repository contents
+  pull-requests: write     # Post comments on PR with build results
+
+jobs:
+  # JOB 1: VALIDATION
+  # Validates source structure and app definitions before building
+  validate:
+    name: Validate {SOURCE_DISPLAY_NAME}
+    runs-on: ubuntu-latest
+    steps:
+      # STEP: Checkout repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # STEP: Validate source structure
+      # Uses repository-specific action to validate this source
+      # Checks: directory structure, required files, schema compliance
+      - name: Validate source structure
+        uses: ./.github/actions/validate-source
+        with:
+          # REQUIRED: Update this to your source name
+          source: {source}
+
+  # JOB 2: BUILD
+  # Builds Debian packages for this source to verify buildability
+  # Runs after validation succeeds
+  build:
+    name: Build {SOURCE_DISPLAY_NAME} Packages
+    runs-on: ubuntu-latest
+    needs: validate  # Wait for validation to pass before building
+    steps:
+      # STEP: Checkout repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # STEP: Build packages using repository build action
+      # This action handles Python setup, dependency installation, and building
+      - name: Build packages
+        id: build
+        uses: ./.github/actions/build-deb
+        with:
+          # REQUIRED: Update this to your source name
+          source: {source}
+
+      # STEP: Comment on PR with build results
+      # Posts a comment to the PR showing build success/failure and package count
+      # Always runs (even on failure) so PR authors get feedback
+      - name: Comment on PR with build results
+        uses: actions/github-script@v7
+        if: always()  # Run even if build fails
+        with:
+          script: |
+            const buildOutcome = '${{ steps.build.outcome }}';
+            const packageCount = '${{ steps.build.outputs.package-count }}' || '0';
+
+            // Generate appropriate message based on build outcome
+            let body;
+            if (buildOutcome === 'skipped') {
+              // Build was skipped (usually means source not yet implemented)
+              body = `ℹ️ **Build skipped** for {source}\n\nSource will be created in future implementation.\n\nWorkflow and actions are ready for testing.`;
+            } else if (buildOutcome === 'success') {
+              // Build succeeded - report package count
+              body = `✅ **Build successful** for {source}\n\n📦 Built ${packageCount} packages\n\nPackages are available as workflow artifacts for inspection.`;
+            } else {
+              // Build failed - direct to logs
+              body = `❌ **Build failed** for {source}\n\nPlease check the workflow logs for details.`;
+            }
+
+            // Post comment to PR
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      # NOTE: Artifact upload is handled by the build-deb action
+      # No need to duplicate artifact upload here
