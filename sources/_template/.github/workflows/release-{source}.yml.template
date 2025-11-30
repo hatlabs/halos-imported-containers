@@ -1,0 +1,159 @@
+# GitHub Actions Workflow for Release Build and Publish
+# This workflow builds and publishes {SOURCE_DISPLAY_NAME} packages to stable channel on release
+#
+# TEMPLATE USAGE:
+# 1. Copy this file to: .github/workflows/release-{source}.yml
+# 2. Replace {SOURCE_DISPLAY_NAME} with the human-readable source name (e.g., "CasaOS Official", "Runtipi")
+# 3. Replace {source} with the source directory name (lowercase, e.g., "casaos", "runtipi")
+# 4. Update tag name filters if using custom tag format
+# 5. Remove this comment block and the .template extension
+
+name: Release - {SOURCE_DISPLAY_NAME}
+
+# TRIGGER CONFIGURATION
+# This workflow runs when a GitHub release is published
+# Tag name filtering ensures only relevant releases trigger this source's workflow
+on:
+  release:
+    types: [published]  # Only published releases (not drafts)
+
+# PERMISSIONS
+# Requires write permission to attach packages to release
+permissions:
+  contents: write
+
+jobs:
+  # JOB 1: BUILD
+  # Builds Debian packages for this source at the release tag
+  build:
+    name: Build {SOURCE_DISPLAY_NAME} Packages for Release
+    runs-on: ubuntu-latest
+    # CONDITIONAL EXECUTION
+    # Only run if release is not a draft and tagged for this source
+    # Expected tag formats:
+    #   - {source}/v1.2.3    (source-prefixed semantic version)
+    #   - v1.2.3-{source}    (version with source suffix)
+    # REQUIRED: Update source name in tag filter conditions
+    if: |
+      github.event.release.draft == false &&
+      (startsWith(github.event.release.tag_name, '{source}/') ||
+       contains(github.event.release.tag_name, '{source}'))
+    steps:
+      # STEP: Checkout code at the release tag
+      # Important: checks out the exact tagged version, not main branch
+      - name: Checkout code at release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      # STEP: Build packages using repository build action
+      # Builds packages from the tagged release version
+      - name: Build packages
+        id: build
+        uses: ./.github/actions/build-deb
+        with:
+          # REQUIRED: Update this to your source name
+          source: {source}
+
+      # STEP: Upload build artifacts
+      # Stores packages as workflow artifacts for download
+      # Retention increased to 90 days for stable releases
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          # Artifact name includes source, channel, and tag for clarity
+          name: packages-{source}-stable-${{ github.event.release.tag_name }}
+          path: |
+            build/*.deb        # Debian packages
+            build/*.buildinfo  # Build information
+            build/*.changes    # Debian changes files
+          retention-days: 90   # Keep stable release artifacts longer
+
+      # STEP: Attach packages to GitHub release
+      # Makes packages downloadable directly from the release page
+      - name: Attach packages to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/*.deb
+          tag_name: ${{ github.event.release.tag_name }}
+
+  # JOB 2: PUBLISH TO STABLE CHANNEL
+  # Publishes built packages to APT repository stable channel
+  # Runs after build succeeds
+  publish-stable:
+    name: Publish to Stable Channel
+    runs-on: ubuntu-latest
+    needs: build  # Wait for build to complete
+    # CONDITIONAL EXECUTION (must match build job condition)
+    # REQUIRED: Update source name in tag filter conditions
+    if: |
+      github.event.release.draft == false &&
+      (startsWith(github.event.release.tag_name, '{source}/') ||
+       contains(github.event.release.tag_name, '{source}'))
+    steps:
+      # STEP: Download build artifacts from previous job
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: packages-{source}-stable-${{ github.event.release.tag_name }}
+          path: build
+
+      # STEP: Check if packages exist
+      # Verifies that packages were actually built
+      # Handles case where source might not be fully implemented yet
+      - name: Check if packages exist
+        id: check
+        run: |
+          if ls build/*.deb 1> /dev/null 2>&1; then
+            echo "has-packages=true" >> $GITHUB_OUTPUT
+            echo "::notice::Found packages to publish"
+          else
+            echo "has-packages=false" >> $GITHUB_OUTPUT
+            echo "::notice::No packages to publish (source not yet implemented)"
+          fi
+
+      # STEP: List packages to publish (for logging/debugging)
+      # Only runs if packages exist
+      - name: List packages to publish
+        if: steps.check.outputs.has-packages == 'true'
+        run: |
+          echo "::notice::Publishing to stable channel"
+          echo "::notice::Release tag: ${{ github.event.release.tag_name }}"
+          echo "::notice::Packages to publish:"
+          ls -lh build/*.deb
+
+      # STEP: Dispatch to APT repository
+      # Sends event to apt.hatlabs.fi repository to trigger package import
+      # Only runs if packages exist
+      - name: Dispatch to APT repository
+        if: steps.check.outputs.has-packages == 'true'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          # REQUIRED: Ensure APT_REPO_PAT secret is configured in repository settings
+          token: ${{ secrets.APT_REPO_PAT }}
+          repository: hatlabs/apt.hatlabs.fi
+          event-type: package-updated
+          # Payload tells APT repo what to import and where
+          client-payload: |
+            {
+              "repository": "${{ github.repository }}",
+              "distro": "trixie",    # Debian 13
+              "channel": "stable",   # Stable channel (no _pre suffix)
+              "component": "main"    # Main component
+            }
+
+      # STEP: Report success (for logging/debugging)
+      # Only runs if packages exist
+      - name: Report success
+        if: steps.check.outputs.has-packages == 'true'
+        run: |
+          echo "=== Stable Channel Publish Complete ==="
+          echo "Repository: ${{ github.repository }}"
+          echo "Release tag: ${{ github.event.release.tag_name }}"
+          echo "Distro: trixie"
+          echo "Channel: stable"
+          echo "Component: main"
+          echo ""
+          echo "Dispatched to hatlabs/apt.hatlabs.fi"
+          echo "Packages will be available via apt.hatlabs.fi stable channel"
+          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }}"
