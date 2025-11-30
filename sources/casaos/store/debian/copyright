@@ -1,5 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: casaos-official-container-store
+Upstream-Name: casaos-container-store
 Upstream-Contact: Hat Labs <info@hatlabs.fi>
 Source: https://github.com/hatlabs/halos-imported-containers
 

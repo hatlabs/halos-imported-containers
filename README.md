@@ -6,7 +6,7 @@ Auto-imported container applications from multiple app stores for HaLOS.
 
 This repository contains automatically converted container applications from multiple upstream app stores for use with HaLOS (Hat Labs Operating System). Currently supported sources:
 
-- **[CasaOS Official](https://github.com/IceWhaleTech/CasaOS-AppStore)**: 147+ applications
+- **[CasaOS](https://github.com/IceWhaleTech/CasaOS-AppStore)**: 147+ applications
 - **CasaOS Community**: Third-party CasaOS stores (planned)
 - **Runtipi**: Runtipi app store (planned)
 
@@ -22,7 +22,7 @@ Source-specific prefixes:
 ```
 halos-imported-containers/
 ├── sources/
-│   ├── casaos-official/     # CasaOS official apps (current)
+│   ├── casaos/     # CasaOS official apps (current)
 │   │   ├── apps/            # Converted applications (147+ apps)
 │   │   ├── store/           # Store definition and packaging
 │   │   └── upstream/        # Sync metadata
@@ -38,7 +38,7 @@ halos-imported-containers/
 Apps are automatically converted using the [`container-packaging-tools`](https://github.com/hatlabs/container-packaging-tools) converter:
 
 1. **Upstream Sync**: Monitor multiple upstream app stores for changes
-2. **Automatic Conversion**: Run source-specific converters on all apps (currently 147/147 for CasaOS Official)
+2. **Automatic Conversion**: Run source-specific converters on all apps (currently 147/147 for CasaOS)
 3. **Package Generation**: Build Debian packages with proper metadata and source prefixes
 4. **Repository Publishing**: Publish to apt.hatlabs.fi
 
@@ -52,7 +52,7 @@ Each converted app includes:
 ## Store Configuration
 
 Each source has its own container store package:
-- **casaos-official-container-store**: Includes packages matching `casaos-*-container`
+- **casaos-container-store**: Includes packages matching `casaos-*-container`
 - **casaos-community-container-store** (planned): Includes packages matching `casaos-community-*-container`
 - **runtipi-container-store** (planned): Includes packages matching `runtipi-*-container`
 
@@ -67,7 +67,7 @@ Apps from these stores can be installed via:
 
 ```bash
 # Install a store package
-sudo apt install casaos-official-container-store
+sudo apt install casaos-container-store
 
 # Install individual apps (with source prefix)
 sudo apt install casaos-uptimekuma-container

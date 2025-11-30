@@ -7,20 +7,13 @@ The HaLOS Imported Containers repository provides automated systems for converti
 ### Supported Sources
 
 **Current:**
-1. **CasaOS Official** - CasaOS App Store official repository (147+ applications)
+1. **CasaOS** - IceWhaleTech CasaOS App Store (147+ applications)
    - Package prefix: `casaos-*-container`
-   - Store package: `casaos-official-container-store`
+   - Store package: `casaos-container-store`
 
-**Planned:**
-2. **CasaOS Community** - Third-party CasaOS app stores (TMC Community, etc.)
-   - Package prefix: `casaos-community-*-container`
-   - Store package: `casaos-community-container-store`
-
-3. **Runtipi** - Runtipi app store applications
-   - Package prefix: `runtipi-*-container`
-   - Store package: `runtipi-container-store`
-
-4. **Future Sources** - Extensible architecture supports additional sources as needed
+2. **Future Sources** - Extensible architecture supports additional sources as needed
+   - Each third-party source has its own specific name (e.g., casaos-xyz, casaos-abc)
+   - No generic "community" store - each maintains its own identity
 
 The multi-source architecture allows each source to maintain its own identity, versioning, and quality standards while sharing common infrastructure and tooling.
 
@@ -32,7 +25,7 @@ The multi-source architecture allows each source to maintain its own identity, v
 
 2. **Automated Conversion Pipeline**: Establish fully automated CI/CD pipelines that monitor upstream app stores and convert applications to HaLOS-compatible Debian packages
 
-3. **100% Conversion Success Rate**: Maintain high conversion success rates for each source (currently 147/147 for CasaOS Official)
+3. **100% Conversion Success Rate**: Maintain high conversion success rates for each source (currently 147/147 for CasaOS)
 
 4. **Continuous Synchronization**: Keep HaLOS stores synchronized with upstream changes through daily monitoring and automatic conversion
 
@@ -81,7 +74,7 @@ The multi-source architecture allows each source to maintain its own identity, v
 - Each source maintains its own conversion configuration
 
 **Success Criteria**:
-- All apps from each source convert successfully (currently 147/147 for CasaOS Official)
+- All apps from each source convert successfully (currently 147/147 for CasaOS)
 - Generated packages pass validation
 - Metadata follows Debian packaging standards
 - Configuration schemas are valid
@@ -274,9 +267,9 @@ The multi-source architecture allows each source to maintain its own identity, v
 
 ### Launch Success (First Release)
 
-- [ ] All 147+ CasaOS Official apps converted and packaged
-- [ ] casaos-official-container-store package published
-- [ ] Automated daily sync operational for CasaOS Official source
+- [ ] All 147+ CasaOS apps converted and packaged
+- [ ] casaos-container-store package published
+- [ ] Automated daily sync operational for CasaOS source
 - [ ] At least 3 successful automated sync cycles
 - [ ] Documentation complete (README, SPEC, ARCHITECTURE docs)
 - [ ] Template system for adding new sources established

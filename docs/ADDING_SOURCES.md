@@ -28,7 +28,7 @@ Each source in this repository represents an upstream container app store (like 
 
 **Time Estimate**: 2-4 hours for a new source with existing converter support
 
-**Note**: This guide uses generic examples (like `newsource`, `runtipi`) as placeholders. For actual working implementations, refer to `sources/casaos-official/` as the reference.
+**Note**: This guide uses generic examples (like `newsource`, `runtipi`) as placeholders. For actual working implementations, refer to `sources/casaos/` as the reference.
 
 ## Prerequisites
 
@@ -78,7 +78,7 @@ cp -r sources/_template sources/runtipi
 - Use lowercase letters only
 - Use hyphens for word separation (not underscores)
 - Make it descriptive but concise
-- Examples: `casaos-official`, `runtipi`, `casaos-community`
+- Examples: `casaos`, `runtipi`, `casaos-community`
 
 ### Step 2: Configure Upstream Source
 
@@ -557,7 +557,7 @@ For CasaOS sources, you would:
 2. Run `generate-container-packages` on each app directory
 3. Copy converted apps to your `sources/newsource/apps/` directory
 
-See the existing `sources/casaos-official/apps/` directory structure as a reference for the expected output format.
+See the existing `sources/casaos/apps/` directory structure as a reference for the expected output format.
 
 **Note:** Automated sync workflows (planned) will handle this conversion automatically in the future.
 
@@ -801,13 +801,13 @@ git push
 
 ## Examples
 
-### Reference Implementation: CasaOS Official
+### Reference Implementation: CasaOS
 
 The only complete, working implementation currently in the repository:
-- Source: `sources/casaos-official/`
-- Workflows: `.github/workflows/*casaos-official.yml`
-- Store: `sources/casaos-official/store/`
-- Upstream config: `sources/casaos-official/upstream/source.yaml`
+- Source: `sources/casaos/`
+- Workflows: `.github/workflows/*casaos.yml`
+- Store: `sources/casaos/store/`
+- Upstream config: `sources/casaos/upstream/source.yaml`
 
 Use this as your template when adding new sources.
 
@@ -834,11 +834,11 @@ sources/newsource/
 └── README.md
 ```
 
-**See `sources/casaos-official/` for the actual working implementation.**
+**See `sources/casaos/` for the actual working implementation.**
 
 ## Best Practices
 
-1. **Start with casaos-official as reference:** Copy workflow patterns and structure
+1. **Start with casaos as reference:** Copy workflow patterns and structure
 2. **Test locally first:** Validate and build before creating PR
 3. **Use descriptive names:** Make source IDs and package prefixes clear
 4. **Document categories:** Match categories to actual app types in your source
@@ -857,4 +857,4 @@ sources/newsource/
 
 - **Issues:** [GitHub Issues](https://github.com/hatlabs/halos-imported-containers/issues)
 - **Template Files:** Check `sources/_template/` for examples
-- **Reference:** Use `sources/casaos-official/` as a complete example
+- **Reference:** Use `sources/casaos/` as a complete example

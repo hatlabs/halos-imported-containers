@@ -51,10 +51,10 @@ Usage: $0 <source-name>
 Build all packages (store + apps) for a specific source.
 
 Arguments:
-  source-name    Name of the source to build (e.g., casaos-official)
+  source-name    Name of the source to build (e.g., casaos)
 
 Examples:
-  $0 casaos-official
+  $0 casaos
   $0 runtipi
 
 Prerequisites:
