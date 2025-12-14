@@ -114,14 +114,14 @@ download_casaos_icons() {
 
         # Skip if icon already exists
         if [ -f "$app_dir/icon.png" ] || [ -f "$app_dir/icon.svg" ]; then
-            ((skipped++))
+            : $((skipped++))
             continue
         fi
 
         # Extract icon URL from metadata.yaml
         local metadata_file="$app_dir/metadata.yaml"
         if [ ! -f "$metadata_file" ]; then
-            ((failed++))
+            : $((failed++))
             continue
         fi
 
@@ -130,7 +130,7 @@ download_casaos_icons() {
         icon_url=$(grep -E '^icon:\s*https?://' "$metadata_file" 2>/dev/null | sed 's/^icon:\s*//' | tr -d ' ')
 
         if [ -z "$icon_url" ]; then
-            ((no_url++))
+            : $((no_url++))
             continue
         fi
 
@@ -144,14 +144,14 @@ download_casaos_icons() {
         if curl -sL --connect-timeout 5 --max-time 15 -f "$icon_url" -o "$app_dir/icon.$ext" 2>/dev/null; then
             # Verify it's a valid image
             if file "$app_dir/icon.$ext" | grep -qiE "PNG|SVG|image"; then
-                ((downloaded++))
+                : $((downloaded++))
             else
                 rm -f "$app_dir/icon.$ext"
-                ((failed++))
+                : $((failed++))
             fi
         else
             rm -f "$app_dir/icon.$ext" 2>/dev/null
-            ((failed++))
+            : $((failed++))
         fi
     done
 
