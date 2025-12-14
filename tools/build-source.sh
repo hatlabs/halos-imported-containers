@@ -242,7 +242,8 @@ build_app_packages() {
             # Generate Debian package (creates .deb directly)
             # Note: generate-container-packages creates the .deb file directly,
             # no need to run dpkg-buildpackage afterwards
-            if ! generate-container-packages -o "$BUILD_DIR" "$app_dir"; then
+            # Pass --prefix to add source name prefix (e.g., casaos-) to package names
+            if ! generate-container-packages -o "$BUILD_DIR" --prefix "$source_name" "$app_dir"; then
                 warn "Failed to generate package for $app_name"
                 ((failed_count++))
                 continue
