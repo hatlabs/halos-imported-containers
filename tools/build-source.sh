@@ -92,6 +92,72 @@ check_prerequisites() {
     fi
 }
 
+# Download missing icons for CasaOS apps using URLs from metadata.yaml
+# The converter stores the original icon URL in each app's metadata
+download_casaos_icons() {
+    local apps_dir="$1"
+
+    step "Downloading missing icons from metadata URLs"
+
+    local downloaded=0
+    local skipped=0
+    local failed=0
+    local no_url=0
+
+    for app_dir in "$apps_dir"/*; do
+        if [ ! -d "$app_dir" ]; then
+            continue
+        fi
+
+        local app_name
+        app_name=$(basename "$app_dir")
+
+        # Skip if icon already exists
+        if [ -f "$app_dir/icon.png" ] || [ -f "$app_dir/icon.svg" ]; then
+            : $((skipped++))
+            continue
+        fi
+
+        # Extract icon URL from metadata.yaml
+        local metadata_file="$app_dir/metadata.yaml"
+        if [ ! -f "$metadata_file" ]; then
+            : $((failed++))
+            continue
+        fi
+
+        # Parse icon URL from YAML (simple grep, works for flat YAML)
+        local icon_url
+        icon_url=$(grep -E '^icon:\s*https?://' "$metadata_file" 2>/dev/null | sed 's/^icon:\s*//' | tr -d ' ')
+
+        if [ -z "$icon_url" ]; then
+            : $((no_url++))
+            continue
+        fi
+
+        # Determine file extension from URL
+        local ext="png"
+        if echo "$icon_url" | grep -qi '\.svg$'; then
+            ext="svg"
+        fi
+
+        # Download the icon
+        if curl -sL --connect-timeout 5 --max-time 15 -f "$icon_url" -o "$app_dir/icon.$ext" 2>/dev/null; then
+            # Verify it's a valid image
+            if file "$app_dir/icon.$ext" | grep -qiE "PNG|SVG|image"; then
+                : $((downloaded++))
+            else
+                rm -f "$app_dir/icon.$ext"
+                : $((failed++))
+            fi
+        else
+            rm -f "$app_dir/icon.$ext" 2>/dev/null
+            : $((failed++))
+        fi
+    done
+
+    info "Icons: $downloaded downloaded, $skipped already present, $no_url no URL, $failed failed"
+}
+
 # Build store package using Debian packaging
 build_store_package() {
     local source_name="$1"
@@ -252,6 +318,11 @@ main() {
 
     # Build store package
     build_store_package "$source_name"
+
+    # Download missing icons for CasaOS source
+    if [ "$source_name" = "casaos" ]; then
+        download_casaos_icons "$source_dir/apps"
+    fi
 
     # Build app packages
     build_app_packages "$source_name"
