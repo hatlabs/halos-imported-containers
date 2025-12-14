@@ -7,14 +7,18 @@ services:
       TZ: ${TZ}
     image: filebrowser/filebrowser:v2.49.0
     ports:
-    - protocol: tcp
-      published: 10180
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 10180
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/db
-      target: /db
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/DATA
-      target: /srv
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/db
+        target: /db
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/DATA
+        target: /srv
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

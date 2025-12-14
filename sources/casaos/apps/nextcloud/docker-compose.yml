@@ -3,14 +3,18 @@ services:
   nextcloud:
     image: nextcloud:31.0
     ports:
-    - protocol: tcp
-      published: 10081
-      target: 80
-    - protocol: tcp
-      published: 10443
-      target: 443
-    restart: 'no'
+      - protocol: tcp
+        published: 10081
+        target: 80
+      - protocol: tcp
+        published: 10443
+        target: 443
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/var/www/html
-      target: /var/www/html
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/var/www/html
+        target: /var/www/html
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

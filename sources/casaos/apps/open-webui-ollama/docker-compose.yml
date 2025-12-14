@@ -6,14 +6,18 @@ services:
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES}
     image: ghcr.io/open-webui/open-webui:ollama
     ports:
-    - protocol: tcp
-      published: 3050
-      target: 8080
-    restart: 'no'
+      - protocol: tcp
+        published: 3050
+        target: 8080
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/open-webui
-      target: /app/backend/data
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/ollama
-      target: /root/.ollama
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/open-webui
+        target: /app/backend/data
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/ollama
+        target: /root/.ollama
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

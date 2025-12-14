@@ -6,11 +6,15 @@ services:
       TZ: ${TZ}
     image: ghcr.io/esphome/esphome:2025.11.0
     ports:
-    - protocol: tcp
-      published: 6052
-      target: 6052
-    restart: 'no'
+      - protocol: tcp
+        published: 6052
+        target: 6052
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

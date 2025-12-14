@@ -8,14 +8,18 @@ services:
       UMASK: ${UMASK}
     image: rogerfar/rdtclient:2
     ports:
-    - protocol: tcp
-      published: 6500
-      target: 6500
-    restart: 'no'
+      - protocol: tcp
+        published: 6500
+        target: 6500
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /data/downloads
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/db
-      target: /data/db
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /data/downloads
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/db
+        target: /data/db
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

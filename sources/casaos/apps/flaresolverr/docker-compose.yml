@@ -11,7 +11,11 @@ services:
       UMASK: ${UMASK}
     image: ghcr.io/flaresolverr/flaresolverr:v3.4.5
     ports:
-    - protocol: tcp
-      published: 8191
-      target: 8191
-    restart: 'no'
+      - protocol: tcp
+        published: 8191
+        target: 8191
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

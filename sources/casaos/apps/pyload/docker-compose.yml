@@ -7,17 +7,21 @@ services:
       TZ: ${TZ}
     image: linuxserver/pyload-ng:0.5.0
     ports:
-    - protocol: tcp
-      published: 8000
-      target: 8000
-    - protocol: tcp
-      published: 9666
-      target: 9666
-    restart: 'no'
+      - protocol: tcp
+        published: 8000
+        target: 8000
+      - protocol: tcp
+        published: 9666
+        target: 9666
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /downloads
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

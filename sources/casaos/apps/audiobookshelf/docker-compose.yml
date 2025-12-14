@@ -3,20 +3,24 @@ services:
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:2.30.0
     ports:
-    - protocol: tcp
-      published: 13378
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 13378
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/Media/Audiobooks
-      target: /audiobooks
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Podcasts
-      target: /podcasts
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/metadata
-      target: /metadata
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Audiobooks
+        target: /audiobooks
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Podcasts
+        target: /podcasts
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/metadata
+        target: /metadata
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

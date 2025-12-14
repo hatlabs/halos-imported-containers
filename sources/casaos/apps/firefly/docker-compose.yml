@@ -4,11 +4,15 @@ services:
     environment:
       FIREFLY_PASSWORD: ${FIREFLY_PASSWORD}
     image: uusec/firefly:latest
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/lib/modules
-      target: /lib/modules
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/conf
-      target: /firefly/conf
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/lib/modules
+        target: /lib/modules
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/conf
+        target: /firefly/conf
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -9,14 +9,18 @@ services:
       TZ: ${TZ}
     image: deluan/navidrome:0.55.1
     ports:
-    - protocol: tcp
-      published: 4533
-      target: 4533
-    restart: 'no'
+      - protocol: tcp
+        published: 4533
+        target: 4533
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /data
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Music
-      target: /music
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /data
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Music
+        target: /music
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

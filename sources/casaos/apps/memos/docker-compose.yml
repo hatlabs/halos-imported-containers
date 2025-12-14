@@ -7,11 +7,15 @@ services:
       TZ: ${TZ}
     image: neosmemo/memos:0.24
     ports:
-    - protocol: tcp
-      published: 5230
-      target: 5230
-    restart: 'no'
+      - protocol: tcp
+        published: 5230
+        target: 5230
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/memos
-      target: /var/opt/memos
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/memos
+        target: /var/opt/memos
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

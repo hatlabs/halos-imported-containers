@@ -6,14 +6,18 @@ services:
       NO_CORS: ${NO_CORS}
     image: tsaridas/stremio-docker:v1.2.5
     ports:
-    - protocol: tcp
-      published: 11470
-      target: 11470
-    - protocol: tcp
-      published: 8100
-      target: 8080
-    restart: 'no'
+      - protocol: tcp
+        published: 11470
+        target: 11470
+      - protocol: tcp
+        published: 8100
+        target: 8080
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /root/.stremio-server
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /root/.stremio-server
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

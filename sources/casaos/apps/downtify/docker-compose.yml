@@ -7,11 +7,15 @@ services:
       TZ: ${TZ}
     image: ghcr.io/henriquesebastiao/downtify:1.1.1
     ports:
-    - protocol: tcp
-      published: 8582
-      target: 8000
-    restart: 'no'
+      - protocol: tcp
+        published: 8582
+        target: 8000
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/Downloads/downtify
-      target: /downloads
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads/downtify
+        target: /downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -7,11 +7,15 @@ services:
       TZ: ${TZ}
     image: linuxserver/prowlarr:1.37.0
     ports:
-    - protocol: tcp
-      published: 9696
-      target: 9696
-    restart: 'no'
+      - protocol: tcp
+        published: 9696
+        target: 9696
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

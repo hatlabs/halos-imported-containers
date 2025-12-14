@@ -6,8 +6,12 @@ services:
       PORT: ${PORT}
       START_COMMAND: ${START_COMMAND}
     image: cp0204/ttydbridge:v0.0.3
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/opt
-      target: /opt
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/opt
+        target: /opt
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

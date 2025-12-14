@@ -3,7 +3,11 @@ services:
   adminer:
     image: adminer:5.4.1
     ports:
-    - protocol: tcp
-      published: 8080
-      target: 8080
-    restart: 'no'
+      - protocol: tcp
+        published: 8080
+        target: 8080
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

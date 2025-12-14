@@ -9,26 +9,30 @@ services:
       TZ: ${TZ}
     image: linuxserver/jellyfin:10.10.6
     ports:
-    - protocol: tcp
-      published: 8097
-      target: 8096
-    - protocol: tcp
-      published: 8921
-      target: 8920
-    - protocol: tcp
-      published: 7359
-      target: 7359
-    - protocol: tcp
-      published: 1901
-      target: 1900
-    restart: 'no'
+      - protocol: tcp
+        published: 8097
+        target: 8096
+      - protocol: tcp
+        published: 8921
+        target: 8920
+      - protocol: tcp
+        published: 7359
+        target: 7359
+      - protocol: tcp
+        published: 1901
+        target: 1900
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media
-      target: /Media
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/opt/vc/lib
-      target: /opt/vc/lib
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media
+        target: /Media
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/opt/vc/lib
+        target: /opt/vc/lib
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

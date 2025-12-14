@@ -5,7 +5,11 @@ services:
       ROOT_WWW_PATH: ${ROOT_WWW_PATH}
     image: inglebard/retroarch-web:latest
     ports:
-    - protocol: tcp
-      published: 8183
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 8183
+        target: 80
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

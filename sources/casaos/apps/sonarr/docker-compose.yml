@@ -7,17 +7,21 @@ services:
       TZ: ${TZ}
     image: linuxserver/sonarr:4.0.15
     ports:
-    - protocol: tcp
-      published: 8989
-      target: 8989
-    restart: 'no'
+      - protocol: tcp
+        published: 8989
+        target: 8989
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
-      target: /tv
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /downloads
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
+        target: /tv
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

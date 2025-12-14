@@ -8,11 +8,15 @@ services:
       PUID: ${PUID}
       VERSION: ${VERSION}
     image: lscr.io/linuxserver/plex:1.41.3
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media
-      target: /Media
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media
+        target: /Media
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -7,11 +7,15 @@ services:
       TZ: ${TZ}
     image: noecl/filedrop:1.0.1
     ports:
-    - protocol: tcp
-      published: 8000
-      target: 8000
-    restart: 'no'
+      - protocol: tcp
+        published: 8000
+        target: 8000
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /var/file_drop_files
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /var/file_drop_files
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

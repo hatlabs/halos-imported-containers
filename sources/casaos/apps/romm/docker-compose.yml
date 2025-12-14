@@ -14,26 +14,30 @@ services:
       STEAMGRIDDB_API_KEY: ${STEAMGRIDDB_API_KEY}
     image: rommapp/romm:4.0.1
     ports:
-    - protocol: tcp
-      published: 8285
-      target: 8080
-    restart: 'no'
+      - protocol: tcp
+        published: 8285
+        target: 8080
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/resources
-      target: /romm/resources
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/redis-data
-      target: /redis-data
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/library
-      target: /romm/library
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/assets
-      target: /romm/assets
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /romm/config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/resources
+        target: /romm/resources
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/redis-data
+        target: /redis-data
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/library
+        target: /romm/library
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/assets
+        target: /romm/assets
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /romm/config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   romm-db:
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
@@ -41,8 +45,12 @@ services:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MARIADB_USER: ${MARIADB_USER}
     image: mariadb:11.8.2
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/mysql
-      target: /var/lib/mysql
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/mysql
+        target: /var/lib/mysql
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

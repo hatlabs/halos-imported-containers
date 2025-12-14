@@ -7,14 +7,18 @@ services:
       TZ: ${TZ}
     image: linuxserver/snapdrop:version-eac78009
     ports:
-    - protocol: tcp
-      published: 443
-      target: 443
-    - protocol: tcp
-      published: 89
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 443
+        target: 443
+      - protocol: tcp
+        published: 89
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

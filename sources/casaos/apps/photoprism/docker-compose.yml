@@ -7,14 +7,18 @@ services:
       TZ: ${TZ}
     image: photoprism/photoprism:250228
     ports:
-    - protocol: tcp
-      published: 2342
-      target: 2342
-    restart: 'no'
+      - protocol: tcp
+        published: 2342
+        target: 2342
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/photoprism/storage
-      target: /photoprism/storage
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Gallery
-      target: /photoprism/originals
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/photoprism/storage
+        target: /photoprism/storage
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Gallery
+        target: /photoprism/originals
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

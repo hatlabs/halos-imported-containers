@@ -10,23 +10,27 @@ services:
       USER: ${USER}
     image: linuxserver/transmission:4.0.4
     ports:
-    - protocol: tcp
-      published: 9091
-      target: 9091
-    - protocol: tcp
-      published: 51413
-      target: 51413
-    - protocol: tcp
-      published: 51413
-      target: 51413
-    restart: 'no'
+      - protocol: tcp
+        published: 9091
+        target: 9091
+      - protocol: tcp
+        published: 51413
+        target: 51413
+      - protocol: tcp
+        published: 51413
+        target: 51413
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /downloads
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads/watch
-      target: /watch
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /downloads
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads/watch
+        target: /watch
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

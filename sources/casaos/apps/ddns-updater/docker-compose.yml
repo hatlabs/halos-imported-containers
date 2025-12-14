@@ -2,7 +2,7 @@ name: ddns-updater
 services:
   ddns-updater:
     command:
-    - touch /data/config.json
+      - touch /data/config.json
     environment:
       BACKUP_DIRECTORY: ${BACKUP_DIRECTORY}
       BACKUP_PERIOD: ${BACKUP_PERIOD}
@@ -23,11 +23,15 @@ services:
       UPDATE_COOLDOWN_PERIOD: ${UPDATE_COOLDOWN_PERIOD}
     image: qmcgaw/ddns-updater:v2.9.0
     ports:
-    - protocol: tcp
-      published: 8000
-      target: 8000
-    restart: 'no'
+      - protocol: tcp
+        published: 8000
+        target: 8000
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /updater/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /updater/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -3,11 +3,15 @@ services:
   pocketbase:
     image: argonptg/pocketbase:0.25.9
     ports:
-    - protocol: tcp
-      published: 8090
-      target: 8090
-    restart: 'no'
+      - protocol: tcp
+        published: 8090
+        target: 8090
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/pb_data
-      target: /pb_data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/pb_data
+        target: /pb_data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -2,11 +2,15 @@ name: llama-factory-nvidia
 services:
   llama-factory-nvidia:
     command:
-    - llamafactory-cli
-    - webui
+      - llamafactory-cli
+      - webui
     image: hiyouga/llamafactory:0.9.4
     ports:
-    - protocol: tcp
-      published: 18877
-      target: 7860
-    restart: 'no'
+      - protocol: tcp
+        published: 18877
+        target: 7860
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

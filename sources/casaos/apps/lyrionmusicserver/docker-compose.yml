@@ -5,35 +5,39 @@ services:
       HTTP_PORT: ${HTTP_PORT}
     image: lmscommunity/lyrionmusicserver:9.1.0
     ports:
-    - protocol: tcp
-      published: 9000
-      target: 9000
-    - protocol: tcp
-      published: 9090
-      target: 9090
-    - protocol: tcp
-      published: 3483
-      target: 3483
-    - protocol: udp
-      published: 3483
-      target: 3483
-    restart: 'no'
+      - protocol: tcp
+        published: 9000
+        target: 9000
+      - protocol: tcp
+        published: 9090
+        target: 9090
+      - protocol: tcp
+        published: 3483
+        target: 3483
+      - protocol: udp
+        published: 3483
+        target: 3483
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - read_only: true
-      source: ${CONTAINER_DATA_ROOT}/Media/Music
-      target: /music
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/playlists
-      target: /playlist
-      type: bind
-    - read_only: true
-      source: /etc/localtime
-      target: /etc/localtime
-      type: bind
-    - read_only: true
-      source: /etc/timezone
-      target: /etc/timezone
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - read_only: true
+        source: ${CONTAINER_DATA_ROOT}/Media/Music
+        target: /music
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/playlists
+        target: /playlist
+        type: bind
+      - read_only: true
+        source: /etc/localtime
+        target: /etc/localtime
+        type: bind
+      - read_only: true
+        source: /etc/timezone
+        target: /etc/timezone
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

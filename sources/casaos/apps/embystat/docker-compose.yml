@@ -7,11 +7,15 @@ services:
       TZ: ${TZ}
     image: linuxserver/embystat:0.2.0
     ports:
-    - protocol: tcp
-      published: 6555
-      target: 6555
-    restart: 'no'
+      - protocol: tcp
+        published: 6555
+        target: 6555
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

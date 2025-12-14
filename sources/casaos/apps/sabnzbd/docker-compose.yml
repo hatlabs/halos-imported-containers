@@ -7,17 +7,21 @@ services:
       TZ: ${TZ}
     image: linuxserver/sabnzbd:4.1.0
     ports:
-    - protocol: tcp
-      published: 8282
-      target: 8080
-    restart: 'no'
+      - protocol: tcp
+        published: 8282
+        target: 8080
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /incomplete-downloads
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /downloads
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /incomplete-downloads
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

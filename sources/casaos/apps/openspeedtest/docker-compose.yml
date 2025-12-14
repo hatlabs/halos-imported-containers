@@ -3,7 +3,11 @@ services:
   openspeedtest:
     image: openspeedtest/latest:v2.0.6
     ports:
-    - protocol: tcp
-      published: 3004
-      target: 3000
-    restart: 'no'
+      - protocol: tcp
+        published: 3004
+        target: 3000
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

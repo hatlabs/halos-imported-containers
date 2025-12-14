@@ -7,20 +7,24 @@ services:
       TZ: ${TZ}
     image: pihole/pihole:2025.07.1
     ports:
-    - protocol: tcp
-      published: 8800
-      target: 80
-    - protocol: tcp
-      published: 53
-      target: 53
-    - protocol: udp
-      published: 53
-      target: 53
-    - protocol: tcp
-      published: 8443
-      target: 443
-    restart: 'no'
+      - protocol: tcp
+        published: 8800
+        target: 80
+      - protocol: tcp
+        published: 53
+        target: 53
+      - protocol: udp
+        published: 53
+        target: 53
+      - protocol: tcp
+        published: 8443
+        target: 443
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/etc/pihole/
-      target: /etc/pihole
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/etc/pihole/
+        target: /etc/pihole
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

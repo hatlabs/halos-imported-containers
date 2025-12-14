@@ -7,17 +7,21 @@ services:
       TZ: ${TZ}
     image: linuxserver/duplicati:2.1.0
     ports:
-    - protocol: tcp
-      published: 8200
-      target: 8200
-    restart: 'no'
+      - protocol: tcp
+        published: 8200
+        target: 8200
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Duplicati/backups
-      target: /backups
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Duplicati/source
-      target: /source
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Duplicati/backups
+        target: /backups
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Duplicati/source
+        target: /source
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

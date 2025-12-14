@@ -7,14 +7,18 @@ services:
       TZ: ${TZ}
     image: docker.io/mongo:3.6
     ports:
-    - protocol: tcp
-      published: 27017
-      target: 27017
-    restart: 'no'
+      - protocol: tcp
+        published: 27017
+        target: 27017
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/AppData/unifi-db
-      target: /data/db
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/AppData/unifi-db
+        target: /data/db
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   unifi-network-application:
     environment:
       MONGO_DBNAME: ${MONGO_DBNAME}
@@ -27,20 +31,24 @@ services:
       TZ: ${TZ}
     image: lscr.io/linuxserver/unifi-network-application:latest
     ports:
-    - protocol: tcp
-      published: 8443
-      target: 8443
-    - protocol: udp
-      published: 3478
-      target: 3478
-    - protocol: udp
-      published: 10001
-      target: 10001
-    - protocol: tcp
-      published: 8080
-      target: 8080
-    restart: 'no'
+      - protocol: tcp
+        published: 8443
+        target: 8443
+      - protocol: udp
+        published: 3478
+        target: 3478
+      - protocol: udp
+        published: 10001
+        target: 10001
+      - protocol: tcp
+        published: 8080
+        target: 8080
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

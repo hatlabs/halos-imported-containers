@@ -43,62 +43,80 @@ services:
       WEAVIATE_ENDPOINT: ${WEAVIATE_ENDPOINT}
       WEB_API_CORS_ALLOW_ORIGINS: ${WEB_API_CORS_ALLOW_ORIGINS}
     image: langgenius/dify-api:0.12.1
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/app/api/storage
-      target: /app/api/storage
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/app/api/storage
+        target: /app/api/storage
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   config:
     image: ns2kracy/dify-config:latest
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/nginx
-      target: /configs/nginx
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/data/ssrf_proxy
-      target: /configs/ssrf_proxy
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/data/sandbox
-      target: /configs/sandbox
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/nginx
+        target: /configs/nginx
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/ssrf_proxy
+        target: /configs/ssrf_proxy
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/sandbox
+        target: /configs/sandbox
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   db:
     command:
-    - "postgres -c 'max_connections=100'\n         -c 'shared_buffers=128MB'\n   \
-      \      -c 'work_mem=4MB'\n         -c 'maintenance_work_mem=64MB'\n        \
-      \ -c 'effective_cache_size=4096MB'\n"
+      - "postgres -c 'max_connections=100'\n         -c 'shared_buffers=128MB'\n         -c 'work_mem=4MB'\n         -c 'maintenance_work_mem=64MB'\n         -c 'effective_cache_size=4096MB'\n"
     environment:
       PGDATA: ${PGDATA}
       PGUSER: ${PGUSER}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     image: postgres:15-alpine
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/db/data
-      target: /var/lib/postgresql/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/db/data
+        target: /var/lib/postgresql/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   nginx:
     image: nginx:latest
     ports:
-    - protocol: tcp
-      published: 3701
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 3701
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/nginx
-      target: /etc/nginx
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/nginx
+        target: /etc/nginx
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   redis:
     command:
-    - redis-server --requirepass difyai123456
+      - redis-server --requirepass difyai123456
     environment:
       REDISCLI_AUTH: ${REDISCLI_AUTH}
     image: redis:6-alpine
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/redis/data
-      target: /data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/redis/data
+        target: /data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   sandbox:
     environment:
       API_KEY: ${API_KEY}
@@ -109,11 +127,15 @@ services:
       SANDBOX_PORT: ${SANDBOX_PORT}
       WORKER_TIMEOUT: ${WORKER_TIMEOUT}
     image: langgenius/dify-sandbox:0.2.10
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/sandbox/dependencies
-      target: /dependencies
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/sandbox/dependencies
+        target: /dependencies
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   ssrf_proxy:
     environment:
       COREDUMP_DIR: ${COREDUMP_DIR}
@@ -122,11 +144,15 @@ services:
       SANDBOX_HOST: ${SANDBOX_HOST}
       SANDBOX_PORT: ${SANDBOX_PORT}
     image: ubuntu/squid:latest
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/ssrf_proxy
-      target: /etc/squid
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/ssrf_proxy
+        target: /etc/squid
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   weaviate:
     environment:
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: ${AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED}
@@ -140,17 +166,25 @@ services:
       PERSISTENCE_DATA_PATH: ${PERSISTENCE_DATA_PATH}
       QUERY_DEFAULTS_LIMIT: ${QUERY_DEFAULTS_LIMIT}
     image: semitechnologies/weaviate:1.19.0
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/weaviate
-      target: /var/lib/weaviate
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/weaviate
+        target: /var/lib/weaviate
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   web:
     environment:
       APP_API_URL: ${APP_API_URL}
       CONSOLE_API_URL: ${CONSOLE_API_URL}
     image: langgenius/dify-web:0.12.1
-    restart: 'no'
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   worker:
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL}
@@ -173,8 +207,12 @@ services:
       WEAVIATE_API_KEY: ${WEAVIATE_API_KEY}
       WEAVIATE_ENDPOINT: ${WEAVIATE_ENDPOINT}
     image: langgenius/dify-api:0.12.1
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/app/api/storage
-      target: /app/api/storage
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/app/api/storage
+        target: /app/api/storage
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

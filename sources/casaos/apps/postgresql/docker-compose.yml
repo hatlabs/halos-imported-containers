@@ -10,11 +10,15 @@ services:
       TZ: ${TZ}
     image: postgres:17.4
     ports:
-    - protocol: tcp
-      published: 5432
-      target: 5432
-    restart: 'no'
+      - protocol: tcp
+        published: 5432
+        target: 5432
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /var/lib/postgresql/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /var/lib/postgresql/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

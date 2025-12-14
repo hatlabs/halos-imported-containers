@@ -6,7 +6,11 @@ services:
       PUID: ${PUID}
       TZ: ${TZ}
     image: mongo:4.4.22
-    restart: 'no'
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   petio:
     environment:
       PGID: ${PGID}
@@ -14,14 +18,18 @@ services:
       TZ: ${TZ}
     image: ghcr.io/petio-team/petio@sha256:1c5a9276a844f4284601cbe332905864950545ebdeaad74bacb9097ea4f4b333
     ports:
-    - protocol: tcp
-      published: 7777
-      target: 7777
-    restart: 'no'
+      - protocol: tcp
+        published: 7777
+        target: 7777
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /app/api/config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/logs
-      target: /app/logs
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /app/api/config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/logs
+        target: /app/logs
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

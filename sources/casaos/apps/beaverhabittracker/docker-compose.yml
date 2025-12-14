@@ -8,11 +8,15 @@ services:
       TRUSTED_LOCAL_EMAIL: ${TRUSTED_LOCAL_EMAIL}
     image: daya0576/beaverhabits:0.7.3
     ports:
-    - protocol: tcp
-      published: 15580
-      target: 8080
-    restart: 'no'
+      - protocol: tcp
+        published: 15580
+        target: 8080
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/
-      target: /app/.user
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/
+        target: /app/.user
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -5,11 +5,15 @@ services:
       TZ: ${TZ}
     image: xjxjin/alist-sync:1.1.5
     ports:
-    - protocol: tcp
-      published: 52441
-      target: 52441
-    restart: 'no'
+      - protocol: tcp
+        published: 52441
+        target: 52441
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /app/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /app/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

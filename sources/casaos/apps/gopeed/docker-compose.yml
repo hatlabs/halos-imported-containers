@@ -3,14 +3,18 @@ services:
   gopeed:
     image: liwei2633/gopeed:v1.7.1
     ports:
-    - protocol: tcp
-      published: 9999
-      target: 9999
-    restart: 'no'
+      - protocol: tcp
+        published: 9999
+        target: 9999
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /app/storage
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /app/Downloads
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /app/storage
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /app/Downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
