@@ -5,11 +5,15 @@ services:
       TZ: ${TZ}
     image: privoce/vocechat-server:v0.3.33
     ports:
-    - protocol: tcp
-      published: 3009
-      target: 3000
-    restart: 'no'
+      - protocol: tcp
+        published: 3009
+        target: 3000
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/home/vocechat-server/data
-      target: /home/vocechat-server/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/home/vocechat-server/data
+        target: /home/vocechat-server/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

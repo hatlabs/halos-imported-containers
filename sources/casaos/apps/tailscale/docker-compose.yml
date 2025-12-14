@@ -2,16 +2,19 @@ name: tailscale
 services:
   tailscale:
     entrypoint:
-    - /bin/sh -c "tailscaled --state=/var/lib/tailscale/tailscaled.state & sleep 10;
-      tailscale web --listen 0.0.0.0:5252"
+      - /bin/sh -c "tailscaled --state=/var/lib/tailscale/tailscaled.state & sleep 10; tailscale web --listen 0.0.0.0:5252"
     environment:
       TS_STATE_DIR: ${TS_STATE_DIR}
     image: tailscale/tailscale:v1.90.8
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}
-      target: /var/lib/tailscale
-      type: bind
-    - source: /dev/net/tun
-      target: /dev/net/tun
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}
+        target: /var/lib/tailscale
+        type: bind
+      - source: /dev/net/tun
+        target: /dev/net/tun
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

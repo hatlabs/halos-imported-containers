@@ -3,14 +3,18 @@ services:
   motioneye:
     image: ccrisan/motioneye:master-amd64
     ports:
-    - protocol: tcp
-      published: 8765
-      target: 8765
-    restart: 'no'
+      - protocol: tcp
+        published: 8765
+        target: 8765
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /etc/motioneye
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/motioneye
-      target: /var/lib/motioneye
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /etc/motioneye
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/motioneye
+        target: /var/lib/motioneye
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

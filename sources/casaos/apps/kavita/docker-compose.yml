@@ -5,14 +5,18 @@ services:
       TZ: ${TZ}
     image: jvmilazz0/kavita:0.8.6
     ports:
-    - protocol: tcp
-      published: 5150
-      target: 5000
-    restart: 'no'
+      - protocol: tcp
+        published: 5150
+        target: 5000
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /kavita/config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Manga
-      target: /manga
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /kavita/config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Manga
+        target: /manga
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -3,11 +3,15 @@ services:
   cloudflared:
     image: wisdomsky/cloudflared-web:2025.2.1
     ports:
-    - protocol: tcp
-      published: 14333
-      target: 14333
-    restart: 'no'
+      - protocol: tcp
+        published: 14333
+        target: 14333
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/AppData/casaos-cloudflared/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/AppData/casaos-cloudflared/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -3,26 +3,30 @@ services:
   adguard-home:
     image: adguard/adguardhome:v0.107.61
     ports:
-    - protocol: tcp
-      published: 531
-      target: 53
-    - protocol: udp
-      published: 531
-      target: 53
-    - protocol: tcp
-      published: 3001
-      target: 3000
-    - protocol: tcp
-      published: 853
-      target: 853
-    - protocol: udp
-      published: 784
-      target: 784
-    restart: 'no'
+      - protocol: tcp
+        published: 531
+        target: 53
+      - protocol: udp
+        published: 531
+        target: 53
+      - protocol: tcp
+        published: 3001
+        target: 3000
+      - protocol: tcp
+        published: 853
+        target: 853
+      - protocol: udp
+        published: 784
+        target: 784
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/opt/adguardhome/work
-      target: /opt/adguardhome/work
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/opt/adguardhome/conf
-      target: /opt/adguardhome/conf
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/opt/adguardhome/work
+        target: /opt/adguardhome/work
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/opt/adguardhome/conf
+        target: /opt/adguardhome/conf
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -7,20 +7,24 @@ services:
       TZ: ${TZ}
     image: linuxserver/resilio-sync:2.7.3
     ports:
-    - protocol: tcp
-      published: 55555
-      target: 55555
-    - protocol: tcp
-      published: 8888
-      target: 8888
-    restart: 'no'
+      - protocol: tcp
+        published: 55555
+        target: 55555
+      - protocol: tcp
+        published: 8888
+        target: 8888
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /sync
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /downloads
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /sync
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

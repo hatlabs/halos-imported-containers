@@ -3,11 +3,15 @@ services:
   myspeed:
     image: germannewsmaker/myspeed:1.0.9
     ports:
-    - protocol: tcp
-      published: 5216
-      target: 5216
-    restart: 'no'
+      - protocol: tcp
+        published: 5216
+        target: 5216
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /myspeed/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /myspeed/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

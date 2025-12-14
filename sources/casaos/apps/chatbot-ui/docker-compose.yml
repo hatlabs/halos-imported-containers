@@ -7,7 +7,11 @@ services:
       TZ: ${TZ}
     image: ghcr.io/mckaywrigley/chatbot-ui:main
     ports:
-    - protocol: tcp
-      published: 3080
-      target: 3000
-    restart: 'no'
+      - protocol: tcp
+        published: 3080
+        target: 3000
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -9,11 +9,15 @@ services:
       USE_HTTPS: ${USE_HTTPS}
     image: hexparrot/mineos:latest
     ports:
-    - protocol: tcp
-      published: 8444
-      target: 8443
-    restart: 'no'
+      - protocol: tcp
+        published: 8444
+        target: 8443
+    restart: 'unless-stopped'
     volumes:
-    - source: /var/games/mineos/minecraft
-      target: /var/games/minecraft
-      type: bind
+      - source: /var/games/mineos/minecraft
+        target: /var/games/minecraft
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

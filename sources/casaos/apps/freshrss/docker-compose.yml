@@ -6,14 +6,18 @@ services:
       TZ: ${TZ}
     image: freshrss/freshrss:1.27.1
     ports:
-    - protocol: tcp
-      published: 8749
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 8749
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /var/www/FreshRSS/data
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/extensions
-      target: /var/www/FreshRSS/extensions
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /var/www/FreshRSS/data
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/extensions
+        target: /var/www/FreshRSS/extensions
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

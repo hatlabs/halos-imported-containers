@@ -3,20 +3,24 @@ services:
   portainer:
     image: portainer/portainer-ce:2.31.3
     ports:
-    - protocol: tcp
-      published: 8000
-      target: 8000
-    - protocol: tcp
-      published: 9000
-      target: 9000
-    - protocol: tcp
-      published: 9443
-      target: 9443
-    restart: 'no'
+      - protocol: tcp
+        published: 8000
+        target: 8000
+      - protocol: tcp
+        published: 9000
+        target: 9000
+      - protocol: tcp
+        published: 9443
+        target: 9443
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}
-      target: /data
-      type: bind
-    - source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}
+        target: /data
+        type: bind
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -4,8 +4,12 @@ services:
     environment:
       TZ: ${TZ}
     image: gdy666/lucky:2.15.7
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}
-      target: /goodluck
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}
+        target: /goodluck
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

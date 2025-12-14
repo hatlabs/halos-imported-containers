@@ -7,11 +7,15 @@ services:
       TZ: ${TZ}
     image: linuxserver/tautulli:2.13.2
     ports:
-    - protocol: tcp
-      published: 8181
-      target: 8181
-    restart: 'no'
+      - protocol: tcp
+        published: 8181
+        target: 8181
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

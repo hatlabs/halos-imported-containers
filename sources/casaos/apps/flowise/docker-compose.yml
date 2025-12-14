@@ -2,7 +2,7 @@ name: flowise
 services:
   flowise:
     entrypoint:
-    - /bin/sh -c "sleep 3; flowise start"
+      - /bin/sh -c "sleep 3; flowise start"
     environment:
       APIKEY_PATH: ${APIKEY_PATH}
       BLOB_STORAGE_PATH: ${BLOB_STORAGE_PATH}
@@ -14,11 +14,15 @@ services:
       SECRETKEY_PATH: ${SECRETKEY_PATH}
     image: flowiseai/flowise:3.0.11
     ports:
-    - protocol: tcp
-      published: 3025
-      target: 3025
-    restart: 'no'
+      - protocol: tcp
+        published: 3025
+        target: 3025
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}
-      target: /root/.flowise
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}
+        target: /root/.flowise
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

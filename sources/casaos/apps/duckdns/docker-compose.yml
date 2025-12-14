@@ -10,8 +10,12 @@ services:
       TZ: ${TZ}
       UPDATE_IP: ${UPDATE_IP}
     image: lscr.io/linuxserver/duckdns:latest
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

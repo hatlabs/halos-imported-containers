@@ -14,14 +14,18 @@ services:
       SEARCH_BACKEND_PASSWORD: ${SEARCH_BACKEND_PASSWORD}
     image: archivebox/archivebox:0.7.3
     ports:
-    - protocol: tcp
-      published: 18010
-      target: 8000
-    restart: 'no'
+      - protocol: tcp
+        published: 18010
+        target: 8000
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   archivebox_novnc:
     environment:
       DISPLAY_HEIGHT: ${DISPLAY_HEIGHT}
@@ -29,33 +33,45 @@ services:
       RUN_XTERM: ${RUN_XTERM}
     image: theasp/novnc:latest
     ports:
-    - protocol: tcp
-      published: 18082
-      target: 8080
-    restart: 'no'
+      - protocol: tcp
+        published: 18082
+        target: 8080
+    restart: 'unless-stopped'
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   archivebox_scheduler:
     command:
-    - schedule
-    - --foreground
-    - --update
-    - --every=day
+      - schedule
+      - --foreground
+      - --update
+      - --every=day
     environment:
       SEARCH_BACKEND_ENGINE: ${SEARCH_BACKEND_ENGINE}
       SEARCH_BACKEND_HOST_NAME: ${SEARCH_BACKEND_HOST_NAME}
       SEARCH_BACKEND_PASSWORD: ${SEARCH_BACKEND_PASSWORD}
       TIMEOUT: ${TIMEOUT}
     image: archivebox/archivebox:0.7.3
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   archivebox_sonic:
     environment:
       SEARCH_BACKEND_PASSWORD: ${SEARCH_BACKEND_PASSWORD}
     image: archivebox/sonic:1.4.9
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data/sonic
-      target: /var/lib/sonic/store
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data/sonic
+        target: /var/lib/sonic/store
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

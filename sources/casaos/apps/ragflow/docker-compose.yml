@@ -11,32 +11,36 @@ services:
       TZ: ${TZ}
     image: icewhaletech/ragflow:v0.21.1
     ports:
-    - protocol: tcp
-      published: 9380
-      target: 9380
-    - protocol: tcp
-      published: 30080
-      target: 80
-    - protocol: tcp
-      published: 10443
-      target: 443
-    - protocol: tcp
-      published: 5678
-      target: 5678
-    - protocol: tcp
-      published: 5679
-      target: 5679
-    - protocol: tcp
-      published: 9382
-      target: 9382
-    restart: 'no'
+      - protocol: tcp
+        published: 9380
+        target: 9380
+      - protocol: tcp
+        published: 30080
+        target: 80
+      - protocol: tcp
+        published: 10443
+        target: 443
+      - protocol: tcp
+        published: 5678
+        target: 5678
+      - protocol: tcp
+        published: 5679
+        target: 5679
+      - protocol: tcp
+        published: 9382
+        target: 9382
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/ragflow-logs
-      target: /ragflow/logs
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/history_data_agent
-      target: /ragflow/history_data_agent
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/ragflow-logs
+        target: /ragflow/logs
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/history_data_agent
+        target: /ragflow/history_data_agent
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   ragflow-es01:
     environment:
       BOOTSTRAP_MEMORY_LOCK: ${BOOTSTRAP_MEMORY_LOCK}
@@ -52,78 +56,94 @@ services:
       XPACK_SECURITY_TRANSPORT_SSL_ENABLED: ${XPACK_SECURITY_TRANSPORT_SSL_ENABLED}
     image: elasticsearch:8.11.3
     ports:
-    - protocol: tcp
-      published: 9200
-      target: 9200
-    restart: 'no'
+      - protocol: tcp
+        published: 9200
+        target: 9200
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/es01
-      target: /usr/share/elasticsearch/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/es01
+        target: /usr/share/elasticsearch/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   ragflow-infinity:
     environment:
       TZ: ${TZ}
     image: icewhaletech/ragflow-infinity:v0.6.1
     ports:
-    - protocol: tcp
-      published: 23817
-      target: 23817
-    - protocol: tcp
-      published: 23820
-      target: 23820
-    - protocol: tcp
-      published: 15432
-      target: 5432
-    restart: 'no'
+      - protocol: tcp
+        published: 23817
+        target: 23817
+      - protocol: tcp
+        published: 23820
+        target: 23820
+      - protocol: tcp
+        published: 15432
+        target: 5432
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/infinity
-      target: /var/infinity
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/infinity
+        target: /var/infinity
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   ragflow-minio:
     command:
-    - server
-    - --console-address
-    - :9001
-    - /data
+      - server
+      - --console-address
+      - :9001
+      - /data
     environment:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       TZ: ${TZ}
     image: quay.io/minio/minio:RELEASE.2025-06-13T11-33-47Z
     ports:
-    - protocol: tcp
-      published: 9000
-      target: 9000
-    - protocol: tcp
-      published: 9001
-      target: 9001
-    restart: 'no'
+      - protocol: tcp
+        published: 9000
+        target: 9000
+      - protocol: tcp
+        published: 9001
+        target: 9001
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/minio
-      target: /data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/minio
+        target: /data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   ragflow-mysql:
     command:
-    - --max_connections=1000
-    - --character-set-server=utf8mb4
-    - --collation-server=utf8mb4_unicode_ci
-    - --default-authentication-plugin=mysql_native_password
-    - --tls_version=TLSv1.2,TLSv1.3
-    - --binlog_expire_logs_seconds=604800
+      - --max_connections=1000
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --tls_version=TLSv1.2,TLSv1.3
+      - --binlog_expire_logs_seconds=604800
     environment:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       TZ: ${TZ}
     image: icewhaletech/ragflow-mysql:8.0.39
     ports:
-    - protocol: tcp
-      published: 5455
-      target: 3306
-    restart: 'no'
+      - protocol: tcp
+        published: 5455
+        target: 3306
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/mysql
-      target: /var/lib/mysql
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/mysql
+        target: /var/lib/mysql
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   ragflow-opensearch01:
     environment:
       BOOTSTRAP_MEMORY_LOCK: ${BOOTSTRAP_MEMORY_LOCK}
@@ -141,33 +161,41 @@ services:
       TZ: ${TZ}
     image: hub.icert.top/opensearchproject/opensearch:2.19.1
     ports:
-    - protocol: tcp
-      published: 9201
-      target: 9201
-    restart: 'no'
+      - protocol: tcp
+        published: 9201
+        target: 9201
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/opensearch01
-      target: /usr/share/opensearch/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/opensearch01
+        target: /usr/share/opensearch/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   ragflow-redis:
     command:
-    - redis-server
-    - --requirepass
-    - infini_rag_flow
-    - --maxmemory
-    - 128mb
-    - --maxmemory-policy
-    - allkeys-lru
+      - redis-server
+      - --requirepass
+      - infini_rag_flow
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - allkeys-lru
     image: valkey/valkey:8
     ports:
-    - protocol: tcp
-      published: 6379
-      target: 6379
-    restart: 'no'
+      - protocol: tcp
+        published: 6379
+        target: 6379
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/redis
-      target: /data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/redis
+        target: /data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   ragflow-sandbox-executor-manager:
     environment:
       SANDBOX_BASE_NODEJS_IMAGE: ${SANDBOX_BASE_NODEJS_IMAGE}
@@ -179,11 +207,15 @@ services:
       TZ: ${TZ}
     image: infiniflow/sandbox-executor-manager:latest
     ports:
-    - protocol: tcp
-      published: 9385
-      target: 9385
-    restart: 'no'
+      - protocol: tcp
+        published: 9385
+        target: 9385
+    restart: 'unless-stopped'
     volumes:
-    - source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      type: bind
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

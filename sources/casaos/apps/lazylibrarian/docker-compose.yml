@@ -8,17 +8,21 @@ services:
       TZ: ${TZ}
     image: linuxserver/lazylibrarian:version-7ef0109b
     ports:
-    - protocol: tcp
-      published: 5299
-      target: 5299
-    restart: 'no'
+      - protocol: tcp
+        published: 5299
+        target: 5299
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /downloads
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Books
-      target: /books
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /downloads
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Books
+        target: /books
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

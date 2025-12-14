@@ -3,20 +3,24 @@ services:
   handbrake:
     image: jlesage/handbrake:v25.02.3
     ports:
-    - protocol: tcp
-      published: 5800
-      target: 5800
-    restart: 'no'
+      - protocol: tcp
+        published: 5800
+        target: 5800
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/DATA
-      target: /storage
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/watch
-      target: /watch
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media
-      target: /output
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/DATA
+        target: /storage
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/watch
+        target: /watch
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media
+        target: /output
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

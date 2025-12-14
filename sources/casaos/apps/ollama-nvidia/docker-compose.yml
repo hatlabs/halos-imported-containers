@@ -3,11 +3,15 @@ services:
   ollama:
     image: ollama/ollama:0.9.5
     ports:
-    - protocol: tcp
-      published: 11434
-      target: 11434
-    restart: 'no'
+      - protocol: tcp
+        published: 11434
+        target: 11434
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/
-      target: /root/.ollama
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/
+        target: /root/.ollama
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

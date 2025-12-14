@@ -8,14 +8,18 @@ services:
       WG_PORT: ${WG_PORT}
     image: ghcr.io/wg-easy/wg-easy:13
     ports:
-    - protocol: udp
-      published: 51820
-      target: 51820
-    - protocol: tcp
-      published: 51821
-      target: 51821
-    restart: 'no'
+      - protocol: udp
+        published: 51820
+        target: 51820
+      - protocol: tcp
+        published: 51821
+        target: 51821
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/wireguard
-      target: /etc/wireguard
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/wireguard
+        target: /etc/wireguard
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

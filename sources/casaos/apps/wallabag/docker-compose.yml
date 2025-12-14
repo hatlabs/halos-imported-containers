@@ -6,11 +6,15 @@ services:
       SYMFONY__ENV__SERVER_NAME: ${SYMFONY__ENV__SERVER_NAME}
     image: wallabag/wallabag:2.6.13
     ports:
-    - protocol: tcp
-      published: 25661
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 25661
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/images
-      target: /var/www/wallabag/web/assets/images
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/images
+        target: /var/www/wallabag/web/assets/images
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

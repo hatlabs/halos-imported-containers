@@ -7,17 +7,21 @@ services:
       TZ: ${TZ}
     image: linuxserver/lidarr:2.9.6
     ports:
-    - protocol: tcp
-      published: 8686
-      target: 8686
-    restart: 'no'
+      - protocol: tcp
+        published: 8686
+        target: 8686
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Music
-      target: /music
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /downloads
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Music
+        target: /music
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

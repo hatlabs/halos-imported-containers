@@ -9,11 +9,15 @@ services:
       USERNAME: ${USERNAME}
     image: ugeek/webdav:amd64
     ports:
-    - protocol: tcp
-      published: 5005
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 5005
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/media/ZimaOS-HD/Media
-      target: /media
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/media/ZimaOS-HD/Media
+        target: /media
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

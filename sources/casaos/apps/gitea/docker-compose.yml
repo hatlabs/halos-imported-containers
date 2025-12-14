@@ -6,14 +6,18 @@ services:
       USER_UID: ${USER_UID}
     image: gitea/gitea:1.24.6
     ports:
-    - protocol: tcp
-      published: 3002
-      target: 3000
-    - protocol: tcp
-      published: 222
-      target: 22
-    restart: 'no'
+      - protocol: tcp
+        published: 3002
+        target: 3000
+      - protocol: tcp
+        published: 222
+        target: 22
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

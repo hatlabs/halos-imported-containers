@@ -7,17 +7,21 @@ services:
       TZ: ${TZ}
     image: linuxserver/mylar3:0.8.2
     ports:
-    - protocol: tcp
-      published: 8090
-      target: 8090
-    restart: 'no'
+      - protocol: tcp
+        published: 8090
+        target: 8090
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Comics
-      target: /comics
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /downloads
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Comics
+        target: /comics
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -8,14 +8,18 @@ services:
       TZ: ${TZ}
     image: linuxserver/calibre-web:0.6.24
     ports:
-    - protocol: tcp
-      published: 8083
-      target: 8083
-    restart: 'no'
+      - protocol: tcp
+        published: 8083
+        target: 8083
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Books
-      target: /books
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Books
+        target: /books
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

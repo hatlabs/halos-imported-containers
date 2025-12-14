@@ -3,14 +3,18 @@ services:
   swingmusic:
     image: ghcr.io/swingmx/swingmusic:v1.4.8
     ports:
-    - protocol: tcp
-      published: 1970
-      target: 1970
-    restart: 'no'
+      - protocol: tcp
+        published: 1970
+        target: 1970
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Music
-      target: /music
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Music
+        target: /music
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

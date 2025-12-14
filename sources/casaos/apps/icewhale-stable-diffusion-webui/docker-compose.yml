@@ -6,17 +6,21 @@ services:
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES}
     image: johnguan/stable-diffusion-webui:latest
     ports:
-    - protocol: tcp
-      published: 7860
-      target: 7860
-    restart: 'no'
+      - protocol: tcp
+        published: 7860
+        target: 7860
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/models
-      target: /data/models
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/outputs
-      target: /data/outputs
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/config
-      target: /data/config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/models
+        target: /data/models
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/outputs
+        target: /data/outputs
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/AppData/Stable-Diffusion-WebUI/config
+        target: /data/config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

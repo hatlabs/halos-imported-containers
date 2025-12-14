@@ -6,11 +6,15 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     image: c4illin/convertx:v0.14.1
     ports:
-    - protocol: tcp
-      published: 3333
-      target: 3000
-    restart: 'no'
+      - protocol: tcp
+        published: 3333
+        target: 3000
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /app/data
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /app/data
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

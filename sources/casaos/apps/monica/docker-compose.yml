@@ -8,14 +8,18 @@ services:
       DB_USERNAME: ${DB_USERNAME}
     image: monica:4.1.2
     ports:
-    - protocol: tcp
-      published: 18930
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 18930
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/storage
-      target: /var/www/html/storage
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/storage
+        target: /var/www/html/storage
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
   monica-db:
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
@@ -23,8 +27,12 @@ services:
       MARIADB_RANDOM_ROOT_PASSWORD: ${MARIADB_RANDOM_ROOT_PASSWORD}
       MARIADB_USER: ${MARIADB_USER}
     image: mariadb:11.8.2
-    restart: 'no'
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/mysql
-      target: /var/lib/mysql
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/mysql
+        target: /var/lib/mysql
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

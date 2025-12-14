@@ -7,17 +7,21 @@ services:
       TZ: ${TZ}
     image: linuxserver/bazarr:1.5.3
     ports:
-    - protocol: tcp
-      published: 6767
-      target: 6767
-    restart: 'no'
+      - protocol: tcp
+        published: 6767
+        target: 6767
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/Media/Movies
-      target: /movies
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
-      target: /tv
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Movies
+        target: /movies
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
+        target: /tv
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

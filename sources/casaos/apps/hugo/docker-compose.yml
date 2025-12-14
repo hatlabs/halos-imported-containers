@@ -2,18 +2,22 @@ name: hugo
 services:
   hugo:
     command:
-    - server
-    - --bind=0.0.0.0
+      - server
+      - --bind=0.0.0.0
     image: ghcr.io/gohugoio/hugo:v0.148.2
     ports:
-    - protocol: tcp
-      published: 1313
-      target: 1313
-    restart: 'no'
+      - protocol: tcp
+        published: 1313
+        target: 1313
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/project
-      target: /project
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/cache
-      target: /cache
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/project
+        target: /project
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/cache
+        target: /cache
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

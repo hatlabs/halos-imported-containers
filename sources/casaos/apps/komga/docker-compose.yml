@@ -6,17 +6,21 @@ services:
       PUID: ${PUID}
     image: gotson/komga:1.22.0
     ports:
-    - protocol: tcp
-      published: 25600
-      target: 25600
-    restart: 'no'
+      - protocol: tcp
+        published: 25600
+        target: 25600
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /data
-      type: bind
-    - source: /etc/timezone
-      target: /etc/timezone
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /data
+        type: bind
+      - source: /etc/timezone
+        target: /etc/timezone
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

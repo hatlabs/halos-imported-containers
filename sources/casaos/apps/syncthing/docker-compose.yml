@@ -7,23 +7,27 @@ services:
       TZ: ${TZ}
     image: linuxserver/syncthing:1.29.7
     ports:
-    - protocol: tcp
-      published: 8384
-      target: 8384
-    - protocol: tcp
-      published: 22000
-      target: 22000
-    - protocol: udp
-      published: 22000
-      target: 22000
-    - protocol: udp
-      published: 21027
-      target: 21027
-    restart: 'no'
+      - protocol: tcp
+        published: 8384
+        target: 8384
+      - protocol: tcp
+        published: 22000
+        target: 22000
+      - protocol: udp
+        published: 22000
+        target: 22000
+      - protocol: udp
+        published: 21027
+        target: 21027
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/DATA
-      target: /DATA
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/DATA
+        target: /DATA
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

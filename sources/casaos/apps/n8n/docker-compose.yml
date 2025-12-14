@@ -6,11 +6,15 @@ services:
       TZ: ${TZ}
     image: n8nio/n8n:1.115.3
     ports:
-    - protocol: tcp
-      published: 5678
-      target: 5678
-    restart: 'no'
+      - protocol: tcp
+        published: 5678
+        target: 5678
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}
-      target: /home/node/.n8n
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}
+        target: /home/node/.n8n
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

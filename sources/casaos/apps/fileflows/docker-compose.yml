@@ -7,26 +7,30 @@ services:
       TZ: ${TZ}
     image: revenz/fileflows:stable
     ports:
-    - protocol: tcp
-      published: 19200
-      target: 5000
-    restart: 'no'
+      - protocol: tcp
+        published: 19200
+        target: 5000
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/data
-      target: /app/Data
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/logs
-      target: /app/Logs
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/common
-      target: /app/common
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/temp
-      target: /temp
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media
-      target: /Media
-      type: bind
-    - source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/data
+        target: /app/Data
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/logs
+        target: /app/Logs
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/common
+        target: /app/common
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/temp
+        target: /temp
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media
+        target: /Media
+        type: bind
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

@@ -6,17 +6,21 @@ services:
       HOSTS: ${HOSTS}
     image: mber5/virt-manager:latest
     ports:
-    - protocol: tcp
-      published: 8185
-      target: 80
-    restart: 'no'
+      - protocol: tcp
+        published: 8185
+        target: 80
+    restart: 'unless-stopped'
     volumes:
-    - source: /var/run/libvirt/libvirt-sock
-      target: /var/run/libvirt/libvirt-sock
-      type: bind
-    - source: /var/lib/libvirt
-      target: /var/lib/libvirt
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Downloads
-      target: /DATA/Downloads
-      type: bind
+      - source: /var/run/libvirt/libvirt-sock
+        target: /var/run/libvirt/libvirt-sock
+        type: bind
+      - source: /var/lib/libvirt
+        target: /var/lib/libvirt
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Downloads
+        target: /DATA/Downloads
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'

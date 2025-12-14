@@ -9,20 +9,24 @@ services:
       TZ: ${TZ}
     image: linuxserver/emby:4.9.1
     ports:
-    - protocol: tcp
-      published: 8096
-      target: 8096
-    - protocol: tcp
-      published: 8920
-      target: 8920
-    restart: 'no'
+      - protocol: tcp
+        published: 8096
+        target: 8096
+      - protocol: tcp
+        published: 8920
+        target: 8920
+    restart: 'unless-stopped'
     volumes:
-    - source: ${CONTAINER_DATA_ROOT}/config
-      target: /config
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
-      target: /data/tvshows
-      type: bind
-    - source: ${CONTAINER_DATA_ROOT}/Media/Movies
-      target: /data/movies
-      type: bind
+      - source: ${CONTAINER_DATA_ROOT}/config
+        target: /config
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/TV Shows
+        target: /data/tvshows
+        type: bind
+      - source: ${CONTAINER_DATA_ROOT}/Media/Movies
+        target: /data/movies
+        type: bind
+    logging:
+      driver: journald
+      options:
+        tag: '{{.Name}}'
